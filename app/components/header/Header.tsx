@@ -17,10 +17,15 @@ export function Header() {
     >
       <div className="flex items-center gap-2 z-logo text-bolt-elements-textPrimary cursor-pointer">
         <div className="i-ph:sidebar-simple-duotone text-xl" />
-        <a href="/" className="text-2xl font-semibold text-accent flex items-center">
-          {/* <span className="i-bolt:logo-text?mask w-[46px] inline-block" /> */}
-          <img src="/logo-light-styled.png" alt="logo" className="w-[90px] inline-block dark:hidden" />
-          <img src="/logo-dark-styled.png" alt="logo" className="w-[90px] inline-block hidden dark:block" />
+        <a
+          href="/"
+          className="flex items-center gap-2 text-bolt-elements-textPrimary"
+          aria-label="GXEON App Forge home"
+        >
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#d9a441]/40 bg-[#d9a441]/10 text-sm font-bold text-[#d9a441]">
+            GX
+          </span>
+          <span className="hidden text-sm font-semibold tracking-tight sm:inline">GXEON App Forge</span>
         </a>
       </div>
       {chat.started && ( // Display ChatDescription and HeaderActionButtons only when the chat has started.

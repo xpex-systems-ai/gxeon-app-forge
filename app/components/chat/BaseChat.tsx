@@ -37,25 +37,57 @@ import LlmErrorAlert from './LLMApiAlert';
 const TEXTAREA_MIN_HEIGHT = 76;
 
 const PRODUCT_OS_MODULES = [
-  'Product Builder',
-  'Landing Builder',
-  'Marketplace Pack Generator',
-  'Checkout Blueprint',
-  'Content Factory',
-  'CRM Inbox',
-  'Deploy Center',
-  'Revenue Ledger',
+  { title: 'Product Builder', subtitle: 'Oferta, avatar e estrutura' },
+  { title: 'Landing Builder', subtitle: 'Páginas de venda e captura' },
+  { title: 'Marketplace Pack Generator', subtitle: 'Packs Hotmart, Kiwify, Shopee e afiliados' },
+  { title: 'Checkout Blueprint', subtitle: 'Planos, preço e página de obrigado' },
+  { title: 'Content Factory', subtitle: 'Posts, emails e roteiros' },
+  { title: 'CRM Inbox', subtitle: 'Leads, follow-up e oportunidades' },
+  { title: 'Deploy Center', subtitle: 'GitHub, Railway e Vercel' },
+  { title: 'Revenue Ledger', subtitle: 'Vendas, canais e evidências' },
 ];
 
 const PRODUCT_FACTORY_MODES = [
-  'Criar Produto Digital',
-  'Criar Landing Page',
-  'Criar Marketplace Pack',
-  'Criar Checkout Blueprint',
-  'Criar Kit de Afiliado',
-  'Criar Campanha de Lançamento',
-  'Criar SaaS Starter',
-  'Criar Loja/Afiliado',
+  {
+    label: 'Criar Produto Digital',
+    prompt:
+      'Criar Produto Digital: estruture um produto digital manual-first em português. Entregue em seções: nome, público, oferta, promessa, preço sugerido, página, canais, checklist e próximos passos. Inclua avatar, transformação esperada, módulos/aulas/entregáveis e critérios de aprovação humana antes de qualquer venda.',
+  },
+  {
+    label: 'Criar Landing Page',
+    prompt:
+      'Criar Landing Page: planeje uma página de venda/captura para um produto digital em português. Entregue: nome, público, oferta, promessa, preço sugerido, página (hero, prova, benefícios, FAQ, CTA), canais, checklist e próximos passos. Não assuma checkout real; trate pagamentos como blueprint futuro com aprovação humana.',
+  },
+  {
+    label: 'Criar Marketplace Pack',
+    prompt:
+      'Criar Marketplace Pack: gere um pacote manual-first para cadastrar um produto digital em marketplaces. Entregue: nome, público, oferta, promessa, preço sugerido, página, canais, checklist e próximos passos. Inclua título, descrição curta, descrição longa, tags, imagens necessárias e observações para Hotmart, Kiwify, Shopee, Mercado Livre e ClickBank sem publicar automaticamente.',
+  },
+  {
+    label: 'Criar Checkout Blueprint',
+    prompt:
+      'Criar Checkout Blueprint: desenhe um blueprint de checkout para produto digital em português. Entregue: nome, público, oferta, promessa, preço sugerido, página, canais, checklist e próximos passos. Inclua plano único, parcelamento sugerido, ordem bump/upsell manual, página de obrigado e mensagens de confirmação sem integrar gateways reais.',
+  },
+  {
+    label: 'Criar Kit de Afiliado',
+    prompt:
+      'Criar Kit de Afiliado: monte um kit manual-first para afiliados venderem um produto digital. Entregue: nome, público, oferta, promessa, preço sugerido, página, canais, checklist e próximos passos. Inclua ângulos de venda, criativos, emails, scripts curtos, regras de uso e materiais pendentes para aprovação humana.',
+  },
+  {
+    label: 'Criar Campanha de Lançamento',
+    prompt:
+      'Criar Campanha de Lançamento: planeje uma campanha em português para lançar um produto digital. Entregue: nome, público, oferta, promessa, preço sugerido, página, canais, checklist e próximos passos. Inclua calendário, conteúdos, emails, lives/webinar, métricas de evidência e pontos de decisão manual.',
+  },
+  {
+    label: 'Criar SaaS Starter',
+    prompt:
+      'Criar SaaS Starter: estruture um SaaS starter vendável em português. Entregue: nome, público, oferta, promessa, preço sugerido, página, canais, checklist e próximos passos. Inclua funcionalidades MVP, onboarding, limites de planos, stack sugerida e riscos, sem criar integrações reais ou cobrar pagamentos.',
+  },
+  {
+    label: 'Criar Loja/Afiliado',
+    prompt:
+      'Criar Loja/Afiliado: planeje uma loja ou operação afiliada manual-first em português. Entregue: nome, público, oferta, promessa, preço sugerido, página, canais, checklist e próximos passos. Inclua categorias, curadoria de produtos, conteúdo, funil, tracking de evidências e limites antes de integrações de marketplace.',
+  },
 ];
 
 interface BaseChatProps {
@@ -373,28 +405,38 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
         <div className="flex flex-col lg:flex-row overflow-y-auto w-full h-full">
           <div className={classNames(styles.Chat, 'flex flex-col flex-grow lg:min-w-[var(--chat-min-width)] h-full')}>
             {!chatStarted && (
-              <div id="intro" className="mt-[8vh] max-w-5xl mx-auto text-center px-4 lg:px-0">
+              <div id="intro" className="mt-8 max-w-5xl mx-auto text-center px-4 lg:px-0">
                 <div className="inline-flex items-center gap-2 rounded-full border border-bolt-elements-borderColor bg-bolt-elements-background-depth-2 px-4 py-2 text-xs uppercase tracking-[0.25em] text-bolt-elements-textSecondary animate-fade-in">
                   <span className="i-ph:sparkle-bold text-[#d9a441]" />
-                  Digital Product Creation OS
+                  DIGITAL PRODUCT CREATION OS
                 </div>
                 <h1 className="text-4xl lg:text-7xl font-bold text-bolt-elements-textPrimary mt-5 mb-4 animate-fade-in">
                   GXEON App Forge
                 </h1>
-                <p className="text-md lg:text-xl mb-8 text-bolt-elements-textSecondary animate-fade-in animation-delay-200">
+                <p className="text-md lg:text-xl mb-4 text-bolt-elements-textSecondary animate-fade-in animation-delay-200">
                   Sistema Operacional de Criação e Venda de Produtos Digitais com IA.
                 </p>
-                <p className="text-sm lg:text-base mb-8 font-semibold text-[#d9a441] animate-fade-in animation-delay-200">
+                <p className="text-sm lg:text-base mb-5 font-semibold text-[#d9a441] animate-fade-in animation-delay-200">
                   Crie. Embale. Venda. Distribua. Acompanhe.
                 </p>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8 text-left">
+                <div className="mb-5 inline-flex max-w-3xl items-center rounded-xl border border-[#d9a441]/30 bg-[#d9a441]/10 px-4 py-3 text-left text-xs text-bolt-elements-textSecondary">
+                  <span className="mr-2 rounded-full bg-[#d9a441] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-black">
+                    Founder Preview
+                  </span>
+                  Módulos comerciais em fundação manual-first. Integrações reais entrarão por fases com aprovação
+                  humana.
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5 text-left">
                   {PRODUCT_OS_MODULES.map((module) => (
                     <div
-                      key={module}
-                      className="rounded-xl border border-bolt-elements-borderColor bg-bolt-elements-background-depth-2/80 p-4 shadow-sm"
+                      key={module.title}
+                      className="rounded-xl border border-bolt-elements-borderColor bg-bolt-elements-background-depth-2/80 p-3 shadow-sm"
                     >
-                      <div className="text-sm font-semibold text-bolt-elements-textPrimary">{module}</div>
-                      <div className="mt-1 text-xs text-bolt-elements-textSecondary">Manual-first foundation</div>
+                      <div className="text-sm font-semibold text-bolt-elements-textPrimary">{module.title}</div>
+                      <div className="mt-1 text-xs text-bolt-elements-textSecondary">{module.subtitle}</div>
+                      <div className="mt-2 text-[10px] uppercase tracking-[0.16em] text-[#d9a441]">
+                        Manual-first preview
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -519,23 +561,24 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                       <div>
                         <h2 className="text-sm font-semibold text-bolt-elements-textPrimary">Product Factory Mode</h2>
                         <p className="text-xs text-bolt-elements-textSecondary">
-                          Starter prompts only. No marketplace APIs, payment processing, or automatic publishing.
+                          Prompts estruturados para criação manual-first. Sem APIs de marketplace, pagamentos ou
+                          publicação automática.
                         </p>
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {PRODUCT_FACTORY_MODES.map((mode) => (
                         <button
-                          key={mode}
-                          onClick={(event) => {
-                            handleSendMessage?.(
-                              event,
-                              `${mode}: gere um plano manual-first para um produto digital, incluindo público, oferta, entregáveis, checklist de aprovação humana e próximos passos sem publicar automaticamente.`,
-                            );
+                          key={mode.label}
+                          onClick={() => {
+                            handleInputChange?.({
+                              target: { value: mode.prompt },
+                            } as React.ChangeEvent<HTMLTextAreaElement>);
+                            textareaRef?.current?.focus();
                           }}
                           className="rounded-full border border-bolt-elements-borderColor bg-gray-50 px-3 py-1 text-xs text-bolt-elements-textSecondary transition-theme hover:bg-gray-100 hover:text-bolt-elements-textPrimary dark:bg-gray-950 dark:hover:bg-gray-900"
                         >
-                          {mode}
+                          {mode.label}
                         </button>
                       ))}
                     </div>
