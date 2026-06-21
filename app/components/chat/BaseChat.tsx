@@ -426,6 +426,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                 <ScrollToBottom />
               </StickToBottom.Content>
               <div
+                id="composer"
                 className={classNames('flex flex-col gap-2 w-full max-w-chat mx-auto z-prompt', {
                   'sticky bottom-2 mb-6': chatStarted,
                   'mb-4': !chatStarted,
