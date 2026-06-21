@@ -13,7 +13,12 @@ const PRODUCT_OS_MODULES = [
 
 export function GxeonProductShellIntro() {
   return (
-    <section id="intro" className="mx-auto w-full max-w-5xl px-4 pt-8 text-center sm:pt-10 lg:px-0">
+    <section
+      id="intro"
+      className="w-full text-center"
+      data-gxeon-shell="founder-preview"
+      aria-label="GXEON App Forge founder preview shell"
+    >
       <div className="inline-flex items-center gap-2 rounded-full border border-bolt-elements-borderColor bg-bolt-elements-background-depth-2 px-4 py-2 text-xs uppercase tracking-[0.25em] text-bolt-elements-textSecondary animate-fade-in">
         <span className="i-ph:sparkle-bold text-[#d9a441]" />
         <span translate="no">Digital Product Creation OS</span>
@@ -55,7 +60,8 @@ export function GxeonProductShellIntro() {
       <p className="text-xs text-bolt-elements-textSecondary">
         Powered by <span translate="no">GXEON Systems AI</span>. Based on open-source technology from{' '}
         <span translate="no">bolt.diy</span>. Transformed by <span translate="no">GXEON</span> into a{' '}
-        <span translate="no">Digital Product Creation OS</span>.
+        <span translate="no">Digital Product Creation OS</span>. Foundation build:{' '}
+        <span translate="no">APPFORGE-001.8</span>.
       </p>
     </section>
   );
