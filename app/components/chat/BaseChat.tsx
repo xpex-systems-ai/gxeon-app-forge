@@ -14,11 +14,7 @@ import { getApiKeysFromCookies } from './APIKeyManager';
 import Cookies from 'js-cookie';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import styles from './BaseChat.module.scss';
-import { ImportButtons } from '~/components/chat/chatExportAndImport/ImportButtons';
-import { ExamplePrompts } from '~/components/chat/ExamplePrompts';
-import GitCloneButton from './GitCloneButton';
 import type { ProviderInfo } from '~/types/model';
-import StarterTemplates from './StarterTemplates';
 import type { ActionAlert, SupabaseAlert, DeployAlert, LlmErrorAlertType } from '~/types/actions';
 import DeployChatAlert from '~/components/deploy/DeployAlert';
 import ChatAlert from './ChatAlert';
@@ -33,6 +29,7 @@ import { ChatBox } from './ChatBox';
 import type { DesignScheme } from '~/types/design-scheme';
 import type { ElementInfo } from '~/components/workbench/Inspector';
 import LlmErrorAlert from './LLMApiAlert';
+import { PreChatHome } from './PreChatHome';
 import { GxeonProductShellIntro } from './GxeonProductShellIntro';
 
 const TEXTAREA_MIN_HEIGHT = 76;
@@ -394,7 +391,11 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
         <ClientOnly>{() => <Menu />}</ClientOnly>
         <div className="flex flex-col lg:flex-row overflow-y-auto w-full h-full">
           <div className={classNames(styles.Chat, 'flex flex-col flex-grow lg:min-w-[var(--chat-min-width)] h-full')}>
-            {!chatStarted && <GxeonProductShellIntro />}
+            {!chatStarted && (
+              <div className="mx-auto w-full max-w-5xl px-4 pt-8 sm:pt-10 lg:px-0">
+                <GxeonProductShellIntro />
+              </div>
+            )}
             <StickToBottom
               className={classNames('px-2 sm:px-6 relative', {
                 'pt-6': chatStarted,
@@ -507,59 +508,28 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                   setSelectedElement={setSelectedElement}
                   onWebSearchResult={onWebSearchResult}
                 />
-                {!chatStarted && (
-                  <div className="rounded-2xl border border-bolt-elements-borderColor bg-bolt-elements-background-depth-2/80 p-4">
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <div>
-                        <h2 className="text-sm font-semibold text-bolt-elements-textPrimary" translate="no">
-                          Product Factory Mode
-                        </h2>
-                        <p className="text-xs text-bolt-elements-textSecondary">
-                          Prompts estruturados para criar ofertas, páginas, packs comerciais e lançamentos sem publicar
-                          automaticamente nem conectar marketplaces reais.
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {PRODUCT_FACTORY_MODES.map((mode) => (
-                        <button
-                          key={mode.label}
-                          onClick={() => {
-                            handleInputChange?.({
-                              target: { value: mode.prompt },
-                            } as React.ChangeEvent<HTMLTextAreaElement>);
-                            textareaRef?.current?.focus();
-                          }}
-                          className="rounded-full border border-bolt-elements-borderColor bg-gray-50 px-3 py-1 text-xs text-bolt-elements-textSecondary transition-theme hover:bg-gray-100 hover:text-bolt-elements-textPrimary dark:bg-gray-950 dark:hover:bg-gray-900"
-                        >
-                          {mode.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             </StickToBottom>
-            <div className="flex flex-col justify-center px-4 pb-10">
-              {!chatStarted && (
-                <div className="flex flex-wrap justify-center gap-2">
-                  {ImportButtons(importChat)}
-                  <GitCloneButton importChat={importChat} />
-                </div>
-              )}
-              <div className="flex flex-col gap-5">
-                {!chatStarted &&
-                  ExamplePrompts((event, messageInput) => {
-                    if (isStreaming) {
-                      handleStop?.();
-                      return;
-                    }
+            {!chatStarted && (
+              <PreChatHome
+                importChat={importChat}
+                productFactoryModes={PRODUCT_FACTORY_MODES}
+                setPrompt={(prompt) => {
+                  handleInputChange?.({
+                    target: { value: prompt },
+                  } as React.ChangeEvent<HTMLTextAreaElement>);
+                  textareaRef?.current?.focus();
+                }}
+                sendExamplePrompt={(event, messageInput) => {
+                  if (isStreaming) {
+                    handleStop?.();
+                    return;
+                  }
 
-                    handleSendMessage?.(event, messageInput);
-                  })}
-                {!chatStarted && <StarterTemplates />}
-              </div>
-            </div>
+                  handleSendMessage?.(event, messageInput);
+                }}
+              />
+            )}
           </div>
           <ClientOnly>
             {() => (
