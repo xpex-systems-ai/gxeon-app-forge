@@ -392,14 +392,14 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
         <div className="flex flex-col lg:flex-row overflow-y-auto w-full h-full">
           <div className={classNames(styles.Chat, 'flex flex-col flex-grow lg:min-w-[var(--chat-min-width)] h-full')}>
             {!chatStarted && (
-              <div className="mx-auto w-full max-w-5xl px-4 pt-8 sm:pt-10 lg:px-0">
+              <div className="mx-auto w-full max-w-5xl px-4 pt-4 sm:pt-5 lg:px-0">
                 <GxeonProductShellIntro />
               </div>
             )}
             <StickToBottom
               className={classNames('px-2 sm:px-6 relative', {
                 'pt-6': chatStarted,
-                'pt-5': !chatStarted,
+                'pt-3': !chatStarted,
                 'h-full flex flex-col modern-scrollbar': chatStarted,
               })}
               resize="smooth"
@@ -429,7 +429,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                 id="composer"
                 className={classNames('flex flex-col gap-2 w-full max-w-chat mx-auto z-prompt', {
                   'sticky bottom-2 mb-6': chatStarted,
-                  'mb-4': !chatStarted,
+                  'mb-3': !chatStarted,
                 })}
               >
                 <div className="flex flex-col gap-2">
