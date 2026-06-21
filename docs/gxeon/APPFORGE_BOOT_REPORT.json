@@ -1,0 +1,75 @@
+{
+  "mission": "APPFORGE-000_RUNTIME_BOOT_AND_REPOSITORY_AUDIT",
+  "repository": "xpex-systems-ai/gxeon-app-forge",
+  "branch": "main",
+  "audit_date_utc": "2026-06-21",
+  "mode": "READONLY_AUDIT_FIRST",
+  "changes_made": "Documentation-only audit files under docs/gxeon.",
+  "product_behavior_changes": false,
+  "commercial_integrations_added": false,
+  "deep_rebrand_performed": false,
+  "secrets_committed": false,
+  "license_preserved": true,
+  "upstream_attribution_preserved": true,
+  "runtime": {
+    "node_observed": "v24.15.0",
+    "node_engine_required": ">=18.18.0",
+    "pnpm_observed": "9.14.4",
+    "package_manager_declared": "pnpm@9.14.4",
+    "framework": "Remix + Vite + React",
+    "docker_port": 5173
+  },
+  "commands": [
+    {
+      "command": "node -v",
+      "status": "pass",
+      "result": "v24.15.0"
+    },
+    {
+      "command": "pnpm -v",
+      "status": "pass",
+      "result": "9.14.4"
+    },
+    {
+      "command": "pnpm install --frozen-lockfile",
+      "status": "pass",
+      "result": "Lockfile up to date; install completed; Node emitted url.parse deprecation warning."
+    },
+    {
+      "command": "pnpm run typecheck",
+      "status": "fail",
+      "result": "functions/[[path]].ts(5,37): error TS2307: Cannot find module '../build/server' or its corresponding type declarations."
+    },
+    {
+      "command": "pnpm run lint",
+      "status": "pass",
+      "result": "ESLint completed with no reported violations."
+    },
+    {
+      "command": "pnpm run build",
+      "status": "pass_with_warnings",
+      "result": "Remix/Vite client and SSR builds completed; warnings included Vite CJS deprecation, browser externalization, missing UnoCSS icons, and large chunks."
+    },
+    {
+      "command": "pnpm run test",
+      "status": "pass_with_warning",
+      "result": "3 test files passed; 52 tests passed; stderr noted indexedDB is not available in this environment."
+    }
+  ],
+  "deployment_decision": {
+    "recommended_first_target": "Railway Docker",
+    "reason": "Production Docker target exposes port 5173, includes healthcheck, and supports runtime env injection without committing secrets.",
+    "cloudflare_pages": "candidate",
+    "vercel": "candidate_after_adapter_validation",
+    "railway_docker": "recommended"
+  },
+  "risk_level": "medium",
+  "key_risks": [
+    "Typecheck fails before build because Cloudflare function imports generated build/server output.",
+    "VITE-prefixed access tokens can be exposed to client-side code and should not hold long-lived management credentials in production.",
+    "Docker production command uses Wrangler Pages dev; validate production long-running behavior on target platform.",
+    "Build emits large chunk and missing icon warnings."
+  ],
+  "ready_for_appforge_001": true,
+  "next_mission": "APPFORGE-001_GXEON_IDENTITY_AND_DIGITAL_PRODUCT_OS_FOUNDATION"
+}
