@@ -1,6 +1,6 @@
 {
-  "name": "bolt",
-  "description": "An AI Agent",
+  "name": "gxeon-app-forge",
+  "description": "GXEON App Forge Digital Product Creation OS foundation based on bolt.diy",
   "private": true,
   "license": "MIT",
   "sideEffects": false,

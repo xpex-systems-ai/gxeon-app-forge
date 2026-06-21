@@ -36,6 +36,28 @@ import LlmErrorAlert from './LLMApiAlert';
 
 const TEXTAREA_MIN_HEIGHT = 76;
 
+const PRODUCT_OS_MODULES = [
+  'Product Builder',
+  'Landing Builder',
+  'Marketplace Pack Generator',
+  'Checkout Blueprint',
+  'Content Factory',
+  'CRM Inbox',
+  'Deploy Center',
+  'Revenue Ledger',
+];
+
+const PRODUCT_FACTORY_MODES = [
+  'Criar Produto Digital',
+  'Criar Landing Page',
+  'Criar Marketplace Pack',
+  'Criar Checkout Blueprint',
+  'Criar Kit de Afiliado',
+  'Criar Campanha de Lançamento',
+  'Criar SaaS Starter',
+  'Criar Loja/Afiliado',
+];
+
 interface BaseChatProps {
   textareaRef?: React.RefObject<HTMLTextAreaElement> | undefined;
   messageRef?: RefCallback<HTMLDivElement> | undefined;
@@ -351,12 +373,34 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
         <div className="flex flex-col lg:flex-row overflow-y-auto w-full h-full">
           <div className={classNames(styles.Chat, 'flex flex-col flex-grow lg:min-w-[var(--chat-min-width)] h-full')}>
             {!chatStarted && (
-              <div id="intro" className="mt-[16vh] max-w-2xl mx-auto text-center px-4 lg:px-0">
-                <h1 className="text-3xl lg:text-6xl font-bold text-bolt-elements-textPrimary mb-4 animate-fade-in">
-                  Where ideas begin
+              <div id="intro" className="mt-[8vh] max-w-5xl mx-auto text-center px-4 lg:px-0">
+                <div className="inline-flex items-center gap-2 rounded-full border border-bolt-elements-borderColor bg-bolt-elements-background-depth-2 px-4 py-2 text-xs uppercase tracking-[0.25em] text-bolt-elements-textSecondary animate-fade-in">
+                  <span className="i-ph:sparkle-bold text-[#d9a441]" />
+                  Digital Product Creation OS
+                </div>
+                <h1 className="text-4xl lg:text-7xl font-bold text-bolt-elements-textPrimary mt-5 mb-4 animate-fade-in">
+                  GXEON App Forge
                 </h1>
                 <p className="text-md lg:text-xl mb-8 text-bolt-elements-textSecondary animate-fade-in animation-delay-200">
-                  Bring ideas to life in seconds or get help on existing projects.
+                  Sistema Operacional de Criação e Venda de Produtos Digitais com IA.
+                </p>
+                <p className="text-sm lg:text-base mb-8 font-semibold text-[#d9a441] animate-fade-in animation-delay-200">
+                  Crie. Embale. Venda. Distribua. Acompanhe.
+                </p>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8 text-left">
+                  {PRODUCT_OS_MODULES.map((module) => (
+                    <div
+                      key={module}
+                      className="rounded-xl border border-bolt-elements-borderColor bg-bolt-elements-background-depth-2/80 p-4 shadow-sm"
+                    >
+                      <div className="text-sm font-semibold text-bolt-elements-textPrimary">{module}</div>
+                      <div className="mt-1 text-xs text-bolt-elements-textSecondary">Manual-first foundation</div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-bolt-elements-textSecondary">
+                  Powered by GXEON Systems AI. Based on open-source technology from bolt.diy. Transformed by GXEON into
+                  a Digital Product Creation OS.
                 </p>
               </div>
             )}
@@ -469,6 +513,34 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                   setSelectedElement={setSelectedElement}
                   onWebSearchResult={onWebSearchResult}
                 />
+                {!chatStarted && (
+                  <div className="rounded-2xl border border-bolt-elements-borderColor bg-bolt-elements-background-depth-2/80 p-4">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <div>
+                        <h2 className="text-sm font-semibold text-bolt-elements-textPrimary">Product Factory Mode</h2>
+                        <p className="text-xs text-bolt-elements-textSecondary">
+                          Starter prompts only. No marketplace APIs, payment processing, or automatic publishing.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {PRODUCT_FACTORY_MODES.map((mode) => (
+                        <button
+                          key={mode}
+                          onClick={(event) => {
+                            handleSendMessage?.(
+                              event,
+                              `${mode}: gere um plano manual-first para um produto digital, incluindo público, oferta, entregáveis, checklist de aprovação humana e próximos passos sem publicar automaticamente.`,
+                            );
+                          }}
+                          className="rounded-full border border-bolt-elements-borderColor bg-gray-50 px-3 py-1 text-xs text-bolt-elements-textSecondary transition-theme hover:bg-gray-100 hover:text-bolt-elements-textPrimary dark:bg-gray-950 dark:hover:bg-gray-900"
+                        >
+                          {mode}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </StickToBottom>
             <div className="flex flex-col justify-center">

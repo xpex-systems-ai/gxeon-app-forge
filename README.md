@@ -1,3 +1,17 @@
+# GXEON App Forge
+
+**GXEON App Forge** is the founder-preview foundation of a Digital Product Creation OS by GXEON Systems AI. It is designed to help creators, agencies, affiliates, stores, and launch operators move from idea to productized digital offer: apps, landing pages, marketplace packs, checkout blueprints, launch content, CRM workflows, deploy checklists, and revenue evidence.
+
+This repository is a fork based on the open-source bolt.diy project. The existing app builder core, upstream attribution, and MIT license are preserved. GXEON's current work adds a manual-first productization layer and public identity foundation; it does **not** add live payment processing, marketplace API publishing, automatic social posting, or real production credentials.
+
+- [GXEON App Forge Master Blueprint](./docs/gxeon/APPFORGE_MASTER_BLUEPRINT.md)
+- [Upstream Credits](./docs/gxeon/UPSTREAM_CREDITS.md)
+- [License and Attribution Notice](./docs/gxeon/LICENSE_AND_ATTRIBUTION_NOTICE.md)
+- [Public Beta Roadmap](./docs/gxeon/APPFORGE_PUBLIC_BETA_ROADMAP.md)
+- [Safety and Commercial Claims Policy](./docs/gxeon/APPFORGE_SAFETY_AND_CLAIMS_POLICY.md)
+
+---
+
 # bolt.diy
 
 [![bolt.diy: AI-Powered Full-Stack Web Development in the Browser](./public/social_preview_index.jpg)](https://bolt.diy)
