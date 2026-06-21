@@ -49,13 +49,19 @@ const FLOWS = [
 const TEMPLATES = ['Página de venda', 'SaaS Starter', 'Loja afiliada', 'Curso digital', 'Dashboard', 'CRM de leads'];
 
 export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreChatHomeProps) {
+  const applyProductFactoryMode = (prompt: string) => {
+    setPrompt(prompt);
+    requestAnimationFrame(() => {
+      document.querySelector<HTMLTextAreaElement>('#composer textarea')?.focus();
+    });
+  };
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-2 pb-8 sm:px-6" data-gxeon-pre-chat-actions>
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-2 pb-6 sm:px-6" data-gxeon-pre-chat-actions>
       <section
-        className="mx-auto w-full max-w-chat rounded-2xl border border-[#d9a441]/20 bg-[#07080d]/90 p-4 shadow-[0_18px_60px_rgba(0,0,0,0.24)]"
+        className="mx-auto w-full max-w-chat rounded-2xl border border-[#d9a441]/20 bg-[#07080d]/90 p-3 shadow-[0_14px_44px_rgba(0,0,0,0.22)]"
         id="produto"
       >
-        <div className="mb-3 flex items-start justify-between gap-3">
+        <div className="mb-2 flex items-start justify-between gap-3">
           <div>
             <h2 className="text-sm font-bold text-bolt-elements-textPrimary" translate="no">
               Product Factory Mode
@@ -74,7 +80,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
             <button
               key={mode.label}
               type="button"
-              onClick={() => setPrompt(mode.prompt)}
+              onClick={() => applyProductFactoryMode(mode.prompt)}
               className="rounded-full border border-[#d9a441]/18 bg-black/30 px-3 py-1.5 text-xs text-bolt-elements-textSecondary transition-theme hover:border-[#d9a441]/45 hover:bg-[#d9a441]/10 hover:text-bolt-elements-textPrimary"
             >
               {mode.label}
@@ -83,12 +89,12 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
         </div>
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-[#05060a] p-3" aria-label="Machine status strip">
+      <section className="rounded-2xl border border-white/10 bg-[#05060a] p-2.5" aria-label="Machine status strip">
         <div className="flex flex-wrap items-center gap-2">
           {MACHINE_STATUS.map((item) => (
             <span
               key={item}
-              className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] font-semibold text-white/62"
+              className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 text-[11px] font-semibold text-white/62"
             >
               <span className="mr-1 text-[#d9a441]">●</span>
               {item}
@@ -97,13 +103,13 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
         </div>
       </section>
 
-      <div className="flex flex-wrap justify-center gap-2">
+      <div className="flex flex-wrap justify-center gap-1.5">
         {ImportButtons(importChat)}
         <GitCloneButton importChat={importChat} />
       </div>
 
-      <section id="modulos" className="rounded-2xl border border-white/10 bg-[#07080d] p-4">
-        <div className="mb-3 flex items-end justify-between gap-3">
+      <section id="modulos" className="rounded-2xl border border-white/10 bg-[#07080d] p-3">
+        <div className="mb-2 flex items-end justify-between gap-3">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#d9a441]">Módulos</p>
             <h2 className="text-lg font-black text-white">Sistema compacto da forja</h2>
@@ -112,7 +118,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
         </div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {MODULES.map((module) => (
-            <article key={module.title} className="rounded-xl border border-[#d9a441]/14 bg-black/28 p-3">
+            <article key={module.title} className="rounded-xl border border-[#d9a441]/14 bg-black/28 p-2.5">
               <h3 className="text-sm font-bold text-white" translate="no">
                 {module.title}
               </h3>
@@ -124,15 +130,15 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
 
       <section className="grid gap-3 md:grid-cols-3" id="roadmap">
         {FLOWS.map((flow) => (
-          <article key={flow.title} className="rounded-2xl border border-white/10 bg-[#07080d] p-4">
+          <article key={flow.title} className="rounded-2xl border border-white/10 bg-[#07080d] p-3">
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#d9a441]">Fluxo da Forja</p>
             <h3 className="mt-2 text-base font-black text-white">{flow.title}</h3>
-            <p className="mt-2 text-xs leading-5 text-white/58">{flow.body}</p>
+            <p className="mt-1 text-xs leading-5 text-white/58">{flow.body}</p>
           </article>
         ))}
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-[#05060a] p-4" id="seguranca">
+      <section className="rounded-2xl border border-white/10 bg-[#05060a] p-3" id="seguranca">
         <div className="mb-3 flex items-center justify-between gap-3">
           <h2 className="text-sm font-black text-white">Templates Compactos</h2>
           <span className="rounded-full border border-[#d9a441]/25 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#d9a441]">
@@ -143,7 +149,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
           {TEMPLATES.map((template) => (
             <span
               key={template}
-              className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-white/65"
+              className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-white/65"
             >
               {template} <span className="text-[#d9a441]">Preview</span>
             </span>
@@ -151,7 +157,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
         </div>
       </section>
 
-      <footer id="footer" className="rounded-2xl border border-white/10 bg-black/40 p-4 text-xs text-white/55">
+      <footer id="footer" className="rounded-2xl border border-white/10 bg-black/40 p-3 text-xs text-white/55">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <strong className="text-white" translate="no">
