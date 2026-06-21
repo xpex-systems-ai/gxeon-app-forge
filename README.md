@@ -10,6 +10,14 @@ This repository is a fork based on the open-source bolt.diy project. The existin
 - [Public Beta Roadmap](./docs/gxeon/APPFORGE_PUBLIC_BETA_ROADMAP.md)
 - [Safety and Commercial Claims Policy](./docs/gxeon/APPFORGE_SAFETY_AND_CLAIMS_POLICY.md)
 
+## Founder Preview status
+
+GXEON App Forge is currently in **Founder Preview**. The live foundation supports the app builder core, Product Factory starter prompts, deploy proof, import/clone flows, provider/model selection, and the commercial roadmap shell for a Digital Product Creation OS.
+
+Current commercial modules are manual-first previews. **Product Builder**, **Marketplace Pack Generator**, and **Checkout Blueprint** are upcoming MVP modules planned for `APPFORGE-002_PRODUCT_BUILDER_MVP` and later phases. No live marketplace publishing, payment processing, automatic social posting, or production credential integrations are active yet.
+
+For LLM testing, use temporary/test keys in the UI because browser-entered keys are stored locally in cookies by the existing foundation. Prefer environment-based keys for controlled internal testing and never commit real secrets.
+
 ---
 
 # bolt.diy

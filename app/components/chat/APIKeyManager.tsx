@@ -86,83 +86,90 @@ export const APIKeyManager: React.FC<APIKeyManagerProps> = ({ provider, apiKey, 
   };
 
   return (
-    <div className="flex items-center justify-between py-3 px-1">
-      <div className="flex items-center gap-2 flex-1">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-bolt-elements-textSecondary">{provider?.name} API Key:</span>
-          {!isEditing && (
+    <div className="flex flex-col gap-2 py-3 px-1">
+      <p className="rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs text-bolt-elements-textSecondary">
+        <span className="font-semibold text-bolt-elements-textPrimary" translate="no">
+          Founder Preview:
+        </span>{' '}
+        chaves salvas via UI ficam no navegador/cookies. Use chaves temporárias ou de teste; para testes internos
+        controlados, prefira variáveis de ambiente sem commitar valores reais.
+      </p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 flex-1">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-bolt-elements-textSecondary">{provider?.name} API Key:</span>
+            {!isEditing && (
+              <div className="flex items-center gap-2">
+                {apiKey ? (
+                  <>
+                    <div className="i-ph:check-circle-fill text-green-500 w-4 h-4" />
+                    <span className="text-xs text-green-500">Set via UI</span>
+                  </>
+                ) : isEnvKeySet ? (
+                  <>
+                    <div className="i-ph:check-circle-fill text-green-500 w-4 h-4" />
+                    <span className="text-xs text-green-500">Set via environment variable</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="i-ph:x-circle-fill text-red-500 w-4 h-4" />
+                    <span className="text-xs text-red-500">Not Set (Please set via UI or ENV_VAR)</span>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          {isEditing ? (
             <div className="flex items-center gap-2">
-              {apiKey ? (
-                <>
-                  <div className="i-ph:check-circle-fill text-green-500 w-4 h-4" />
-                  <span className="text-xs text-green-500">Set via UI</span>
-                </>
-              ) : isEnvKeySet ? (
-                <>
-                  <div className="i-ph:check-circle-fill text-green-500 w-4 h-4" />
-                  <span className="text-xs text-green-500">Set via environment variable</span>
-                </>
-              ) : (
-                <>
-                  <div className="i-ph:x-circle-fill text-red-500 w-4 h-4" />
-                  <span className="text-xs text-red-500">Not Set (Please set via UI or ENV_VAR)</span>
-                </>
-              )}
+              <input
+                type="password"
+                value={tempKey}
+                placeholder="Enter API Key"
+                onChange={(e) => setTempKey(e.target.value)}
+                className="w-[300px] px-3 py-1.5 text-sm rounded border border-bolt-elements-borderColor bg-bolt-elements-prompt-background text-bolt-elements-textPrimary focus:outline-none focus:ring-2 focus:ring-bolt-elements-focus"
+              />
+              <IconButton
+                onClick={handleSave}
+                title="Save API Key"
+                className="bg-green-500/10 hover:bg-green-500/20 text-green-500"
+              >
+                <div className="i-ph:check w-4 h-4" />
+              </IconButton>
+              <IconButton
+                onClick={() => setIsEditing(false)}
+                title="Cancel"
+                className="bg-red-500/10 hover:bg-red-500/20 text-red-500"
+              >
+                <div className="i-ph:x w-4 h-4" />
+              </IconButton>
             </div>
+          ) : (
+            <>
+              {
+                <IconButton
+                  onClick={() => setIsEditing(true)}
+                  title="Edit API Key"
+                  className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-500"
+                >
+                  <div className="i-ph:pencil-simple w-4 h-4" />
+                </IconButton>
+              }
+              {provider?.getApiKeyLink && !apiKey && (
+                <IconButton
+                  onClick={() => window.open(provider?.getApiKeyLink)}
+                  title="Get API Key"
+                  className="bg-purple-500/10 hover:bg-purple-500/20 text-purple-500 flex items-center gap-2"
+                >
+                  <span className="text-xs whitespace-nowrap">{provider?.labelForGetApiKey || 'Get API Key'}</span>
+                  <div className={`${provider?.icon || 'i-ph:key'} w-4 h-4`} />
+                </IconButton>
+              )}
+            </>
           )}
         </div>
-      </div>
-
-      <div className="flex items-center gap-2 shrink-0">
-        {isEditing ? (
-          <div className="flex items-center gap-2">
-            <input
-              type="password"
-              value={tempKey}
-              placeholder="Enter API Key"
-              onChange={(e) => setTempKey(e.target.value)}
-              className="w-[300px] px-3 py-1.5 text-sm rounded border border-bolt-elements-borderColor 
-                        bg-bolt-elements-prompt-background text-bolt-elements-textPrimary 
-                        focus:outline-none focus:ring-2 focus:ring-bolt-elements-focus"
-            />
-            <IconButton
-              onClick={handleSave}
-              title="Save API Key"
-              className="bg-green-500/10 hover:bg-green-500/20 text-green-500"
-            >
-              <div className="i-ph:check w-4 h-4" />
-            </IconButton>
-            <IconButton
-              onClick={() => setIsEditing(false)}
-              title="Cancel"
-              className="bg-red-500/10 hover:bg-red-500/20 text-red-500"
-            >
-              <div className="i-ph:x w-4 h-4" />
-            </IconButton>
-          </div>
-        ) : (
-          <>
-            {
-              <IconButton
-                onClick={() => setIsEditing(true)}
-                title="Edit API Key"
-                className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-500"
-              >
-                <div className="i-ph:pencil-simple w-4 h-4" />
-              </IconButton>
-            }
-            {provider?.getApiKeyLink && !apiKey && (
-              <IconButton
-                onClick={() => window.open(provider?.getApiKeyLink)}
-                title="Get API Key"
-                className="bg-purple-500/10 hover:bg-purple-500/20 text-purple-500 flex items-center gap-2"
-              >
-                <span className="text-xs whitespace-nowrap">{provider?.labelForGetApiKey || 'Get API Key'}</span>
-                <div className={`${provider?.icon || 'i-ph:key'} w-4 h-4`} />
-              </IconButton>
-            )}
-          </>
-        )}
       </div>
     </div>
   );

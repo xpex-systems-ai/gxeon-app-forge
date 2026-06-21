@@ -511,10 +511,12 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                   <div className="rounded-2xl border border-bolt-elements-borderColor bg-bolt-elements-background-depth-2/80 p-4">
                     <div className="mb-3 flex items-center justify-between gap-3">
                       <div>
-                        <h2 className="text-sm font-semibold text-bolt-elements-textPrimary">Product Factory Mode</h2>
+                        <h2 className="text-sm font-semibold text-bolt-elements-textPrimary" translate="no">
+                          Product Factory Mode
+                        </h2>
                         <p className="text-xs text-bolt-elements-textSecondary">
-                          Prompts estruturados para criação manual-first. Sem APIs de marketplace, pagamentos ou
-                          publicação automática.
+                          Prompts estruturados para criar ofertas, páginas, packs comerciais e lançamentos sem publicar
+                          automaticamente nem conectar marketplaces reais.
                         </p>
                       </div>
                     </div>
