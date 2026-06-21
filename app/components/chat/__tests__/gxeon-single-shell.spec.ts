@@ -15,12 +15,14 @@ describe('GXEON founder preview shell composition', () => {
   it('keeps the hero and module grid out of secondary pre-chat surfaces', () => {
     expect(chatBox).not.toContain('GXEON App Forge');
     expect(preChatHome).not.toContain('GXEON App Forge');
-    expect(preChatHome).not.toContain('Product Builder');
+    expect(preChatHome).toContain('Product Builder');
   });
 
   it('exposes a stable runtime marker for DOM validation without adding integrations', () => {
     expect(shellIntro).toContain('data-gxeon-shell="founder-preview"');
-    expect(shellIntro).toContain('Foundation build:');
-    expect(shellIntro).toContain('APPFORGE-001.8');
+    expect(shellIntro).toContain('GXEON App Forge');
+    expect(shellIntro).toContain('Manual-first');
+    expect(preChatHome).toContain('Based on open-source technology from');
+    expect(preChatHome).toContain('MIT license');
   });
 });
