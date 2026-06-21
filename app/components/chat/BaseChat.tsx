@@ -33,19 +33,9 @@ import { ChatBox } from './ChatBox';
 import type { DesignScheme } from '~/types/design-scheme';
 import type { ElementInfo } from '~/components/workbench/Inspector';
 import LlmErrorAlert from './LLMApiAlert';
+import { GxeonProductShellIntro } from './GxeonProductShellIntro';
 
 const TEXTAREA_MIN_HEIGHT = 76;
-
-const PRODUCT_OS_MODULES = [
-  { title: 'Product Builder', subtitle: 'Oferta, avatar e estrutura' },
-  { title: 'Landing Builder', subtitle: 'Páginas de venda e captura' },
-  { title: 'Marketplace Pack Generator', subtitle: 'Packs Hotmart, Kiwify, Shopee e afiliados' },
-  { title: 'Checkout Blueprint', subtitle: 'Planos, preço e página de obrigado' },
-  { title: 'Content Factory', subtitle: 'Posts, emails e roteiros' },
-  { title: 'CRM Inbox', subtitle: 'Leads, follow-up e oportunidades' },
-  { title: 'Deploy Center', subtitle: 'GitHub, Railway e Vercel' },
-  { title: 'Revenue Ledger', subtitle: 'Vendas, canais e evidências' },
-];
 
 const PRODUCT_FACTORY_MODES = [
   {
@@ -404,50 +394,11 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
         <ClientOnly>{() => <Menu />}</ClientOnly>
         <div className="flex flex-col lg:flex-row overflow-y-auto w-full h-full">
           <div className={classNames(styles.Chat, 'flex flex-col flex-grow lg:min-w-[var(--chat-min-width)] h-full')}>
-            {!chatStarted && (
-              <div id="intro" className="mt-8 max-w-5xl mx-auto text-center px-4 lg:px-0">
-                <div className="inline-flex items-center gap-2 rounded-full border border-bolt-elements-borderColor bg-bolt-elements-background-depth-2 px-4 py-2 text-xs uppercase tracking-[0.25em] text-bolt-elements-textSecondary animate-fade-in">
-                  <span className="i-ph:sparkle-bold text-[#d9a441]" />
-                  DIGITAL PRODUCT CREATION OS
-                </div>
-                <h1 className="text-4xl lg:text-7xl font-bold text-bolt-elements-textPrimary mt-5 mb-4 animate-fade-in">
-                  GXEON App Forge
-                </h1>
-                <p className="text-md lg:text-xl mb-4 text-bolt-elements-textSecondary animate-fade-in animation-delay-200">
-                  Sistema Operacional de Criação e Venda de Produtos Digitais com IA.
-                </p>
-                <p className="text-sm lg:text-base mb-5 font-semibold text-[#d9a441] animate-fade-in animation-delay-200">
-                  Crie. Embale. Venda. Distribua. Acompanhe.
-                </p>
-                <div className="mb-5 inline-flex max-w-3xl items-center rounded-xl border border-[#d9a441]/30 bg-[#d9a441]/10 px-4 py-3 text-left text-xs text-bolt-elements-textSecondary">
-                  <span className="mr-2 rounded-full bg-[#d9a441] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-black">
-                    Founder Preview
-                  </span>
-                  Módulos comerciais em fundação manual-first. Integrações reais entrarão por fases com aprovação
-                  humana.
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5 text-left">
-                  {PRODUCT_OS_MODULES.map((module) => (
-                    <div
-                      key={module.title}
-                      className="rounded-xl border border-bolt-elements-borderColor bg-bolt-elements-background-depth-2/80 p-3 shadow-sm"
-                    >
-                      <div className="text-sm font-semibold text-bolt-elements-textPrimary">{module.title}</div>
-                      <div className="mt-1 text-xs text-bolt-elements-textSecondary">{module.subtitle}</div>
-                      <div className="mt-2 text-[10px] uppercase tracking-[0.16em] text-[#d9a441]">
-                        Manual-first preview
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs text-bolt-elements-textSecondary">
-                  Powered by GXEON Systems AI. Based on open-source technology from bolt.diy. Transformed by GXEON into
-                  a Digital Product Creation OS.
-                </p>
-              </div>
-            )}
+            {!chatStarted && <GxeonProductShellIntro />}
             <StickToBottom
-              className={classNames('pt-6 px-2 sm:px-6 relative', {
+              className={classNames('px-2 sm:px-6 relative', {
+                'pt-6': chatStarted,
+                'pt-5': !chatStarted,
                 'h-full flex flex-col modern-scrollbar': chatStarted,
               })}
               resize="smooth"
@@ -474,8 +425,9 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                 <ScrollToBottom />
               </StickToBottom.Content>
               <div
-                className={classNames('my-auto flex flex-col gap-2 w-full max-w-chat mx-auto z-prompt mb-6', {
-                  'sticky bottom-2': chatStarted,
+                className={classNames('flex flex-col gap-2 w-full max-w-chat mx-auto z-prompt', {
+                  'sticky bottom-2 mb-6': chatStarted,
+                  'mb-4': !chatStarted,
                 })}
               >
                 <div className="flex flex-col gap-2">
@@ -586,9 +538,9 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                 )}
               </div>
             </StickToBottom>
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-center px-4 pb-10">
               {!chatStarted && (
-                <div className="flex justify-center gap-2">
+                <div className="flex flex-wrap justify-center gap-2">
                   {ImportButtons(importChat)}
                   <GitCloneButton importChat={importChat} />
                 </div>
