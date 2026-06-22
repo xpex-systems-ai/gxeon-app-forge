@@ -4,6 +4,7 @@ import GitCloneButton from './GitCloneButton';
 import { ProductBuilderMvp } from '~/components/gxeon/ProductBuilderMVP';
 import { MarketplacePackGeneratorMvp } from '~/components/gxeon/MarketplacePackGeneratorMVP';
 import { CheckoutBlueprintMvp } from '~/components/gxeon/CheckoutBlueprintMVP';
+import { LandingBuilderMvp } from '~/components/gxeon/LandingBuilderMVP';
 import type { Message } from 'ai';
 
 interface ProductFactoryMode {
@@ -24,6 +25,7 @@ const MACHINE_STATUS = [
   'Manual-first',
   'Pagamentos desativados',
   'Marketplaces em roadmap',
+  'Landing Builder MVP manual-first',
 ];
 
 const MODULES = [
@@ -81,6 +83,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
         <ProductBuilderMvp setPrompt={applyProductFactoryMode} />
         <MarketplacePackGeneratorMvp setPrompt={applyProductFactoryMode} />
         <CheckoutBlueprintMvp setPrompt={applyProductFactoryMode} />
+        <LandingBuilderMvp setPrompt={applyProductFactoryMode} />
         <div className="flex flex-wrap gap-2">
           {productFactoryModes.map((mode) => (
             <button
