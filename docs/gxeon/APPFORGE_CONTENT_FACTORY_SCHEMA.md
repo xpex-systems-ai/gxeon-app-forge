@@ -1,5 +1,13 @@
 # Content Factory Schema
 
+## ContentFactoryDraft
+Fields: `sourceProductIdea`, `sourceNiche`, `sourceAudience`, `sourceProblem`, `sourceOffer`, `sourcePromise`, `basePrice`, `deliveryFormat`, `selectedPlatforms`, `landingGoal`, `campaignGoal`, `campaignTone`, `contentChannels`, `postingCadence`, `ctaMode`, `proofNotes`, `approvalNotes`, `createdAt`, and `updatedAt`.
+
+## ContentFactoryOutput
+Includes `positioning`, `contentAngles`, `instagramPosts`, `linkedinPosts`, `youtubeShorts`, `emailSequence`, `whatsappManualFollowups`, `adAngleDrafts`, `launchCalendar`, `assetChecklist`, `humanApprovalChecklist`, `riskWarnings`, and `nextSteps`.
+
+## ContentFactoryExport
+Includes the normalized draft, generated content, visible context payload, prompt, markdown, safety flags, and export timestamp. Safety flags assert manual-first, no guaranteed income, no auto-posting, no external send, no social/email/WhatsApp execution, and local-only draft behavior.
 `ContentFactoryDraft` stores source product idea, niche, audience, problem, offer, promise, base price, delivery format, selected platforms, landing goal, campaign goal, campaign tone, content channels, posting cadence, CTA mode, proof notes, approval notes, and timestamps.
 
 `ContentFactoryOutput` contains positioning, content angles, Instagram posts, LinkedIn posts, YouTube Shorts, email sequence, WhatsApp manual follow-ups, ad angle drafts with safety notes, launch calendar, asset checklist, human approval checklist, risk warnings, and next steps.

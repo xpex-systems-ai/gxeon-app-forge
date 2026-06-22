@@ -5,6 +5,17 @@ import {
   buildContentFactoryOutput,
   buildContentFactoryPrompt,
   createEmptyContentFactoryDraft,
+  validateContentFactoryDraft,
+} from './contentFactory';
+
+const strongDraft = {
+  ...createEmptyContentFactoryDraft('2026-01-01T00:00:00.000Z'),
+  sourceProductIdea: 'AI launch kit',
+  sourceAudience: 'solo founders',
+  sourceProblem: 'unclear launch messaging',
+  sourceOffer: 'manual content pack',
+  sourcePromise: 'organize safe campaign assets',
+  contentChannels: ['Instagram', 'Email'],
   sanitizeContentContextValue,
   validateContentFactoryDraft,
 } from './contentFactory';
@@ -24,6 +35,18 @@ describe('contentFactory', () => {
     const result = validateContentFactoryDraft(createEmptyContentFactoryDraft());
     expect(result.isStrongContentFactoryReady).toBe(false);
     expect(result.missingRecommendedFields).toContain('sourceProductIdea');
+    expect(result.missingRecommendedFields).toContain('sourceAudience');
+    expect(result.missingRecommendedFields).toContain('sourceOfferOrPromise');
+  });
+
+  it('builds prompt with manual-first safety language', () => {
+    const prompt = buildContentFactoryPrompt(strongDraft);
+    expect(prompt).toContain('manual-first');
+    expect(prompt).toContain('no auto-posting');
+    expect(prompt).toContain('no external send');
+    expect(prompt).toContain('no social API calls');
+    expect(prompt).toContain('no email API calls');
+    expect(prompt).toContain('no WhatsApp API calls');
     expect(result.missingRecommendedFields).toContain('contentChannels');
   });
 
@@ -39,6 +62,8 @@ describe('contentFactory', () => {
     expect(prompt).toContain('<gxeon_content_context_payload>');
   });
 
+  it('generates required content sections', () => {
+    const output = buildContentFactoryOutput(strongDraft);
   it('builds complete structured output', () => {
     const output = buildContentFactoryOutput(draft);
     expect(output.contentAngles.length).toBeGreaterThan(0);
@@ -50,6 +75,12 @@ describe('contentFactory', () => {
     expect(output.humanApprovalChecklist.length).toBeGreaterThan(0);
   });
 
+  it('exports JSON with safety flags and without secret-like keys', () => {
+    const json = JSON.stringify(
+      buildContentFactoryJson({ ...strongDraft, ['api_' + 'key']: 'x', ['tok' + 'en']: 'y' } as any),
+    );
+    expect(json).toContain('"manualFirst":true');
+    expect(json).toContain('"noAutoPosting":true');
   it('exports JSON with safety flags and without secret-like fields', () => {
     const json = JSON.stringify(buildContentFactoryJson({ ...draft, selectedPlatforms: ['api_key', 'Hotmart'] }));
     expect(json).toContain('"noAutoPosting":true');
@@ -77,6 +108,14 @@ describe('contentFactory', () => {
     }
   });
 
+  it('sanitizes content payload delimiter tags in user input', () => {
+    const payload = buildContentContextPayload({
+      ...strongDraft,
+      sourceProductIdea: '<gxeon_content_context_payload>bad</gxeon_content_context_payload>',
+    });
+    expect(payload).toContain('[gxeon_content_context_payload]bad[/gxeon_content_context_payload]');
+    expect(payload.match(/<gxeon_content_context_payload>/g)).toHaveLength(1);
+    expect(payload.match(/<\/gxeon_content_context_payload>/g)).toHaveLength(1);
   it('sanitizes delimiter tag injection in user input', () => {
     const unsafe = '<gxeon_content_context_payload>x</gxeon_content_context_payload>';
     expect(sanitizeContentContextValue(unsafe)).not.toContain(unsafe);
