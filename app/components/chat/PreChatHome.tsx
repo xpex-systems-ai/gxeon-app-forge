@@ -9,6 +9,7 @@ import { ContentFactoryMvp } from '~/components/gxeon/ContentFactoryMVP';
 import { IntegrationReadinessMvp } from '~/components/gxeon/IntegrationReadinessMVP';
 import { ApprovalLedgerMvp } from '~/components/gxeon/ApprovalLedgerMVP';
 import { BetaProductPipelineMvp } from '~/components/gxeon/BetaProductPipelineMVP';
+import { RevenueLedgerMvp } from '~/components/gxeon/RevenueLedgerMVP';
 import type { Message } from 'ai';
 
 interface ProductFactoryMode {
@@ -34,6 +35,7 @@ const MACHINE_STATUS = [
   'Integration Readiness DRY_RUN_ONLY',
   'Approval Ledger local-only',
   'Beta Product Pipeline local-only',
+  'Revenue Ledger local-only',
 ];
 
 const MODULES = [
@@ -47,7 +49,7 @@ const MODULES = [
   { title: 'Beta Pipeline', subtitle: 'Estágios, prioridades e gates locais' },
   { title: 'CRM Inbox', subtitle: 'Leads e follow-up' },
   { title: 'Deploy Center', subtitle: 'GitHub, Railway e Vercel' },
-  { title: 'Revenue Ledger', subtitle: 'Canais, vendas e evidências' },
+  { title: 'Revenue Ledger', subtitle: 'Hipóteses, confirmações manuais e custos locais' },
 ];
 
 const FLOWS = [
@@ -99,6 +101,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
         <IntegrationReadinessMvp setPrompt={applyProductFactoryMode} />
         <ApprovalLedgerMvp />
         <BetaProductPipelineMvp />
+        <RevenueLedgerMvp />
         <div className="flex flex-wrap gap-2">
           {productFactoryModes.map((mode) => (
             <button
@@ -138,7 +141,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#d9a441]">Módulos</p>
             <h2 className="text-lg font-black text-white">Sistema compacto da forja</h2>
           </div>
-          <span className="text-[11px] text-white/45">10 módulos</span>
+          <span className="text-[11px] text-white/45">11 módulos</span>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {MODULES.map((module) => (
