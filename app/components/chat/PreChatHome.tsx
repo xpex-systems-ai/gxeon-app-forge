@@ -2,6 +2,7 @@ import React from 'react';
 import { ImportButtons } from '~/components/chat/chatExportAndImport/ImportButtons';
 import GitCloneButton from './GitCloneButton';
 import { ProductBuilderMvp } from '~/components/gxeon/ProductBuilderMVP';
+import { MarketplacePackGeneratorMvp } from '~/components/gxeon/MarketplacePackGeneratorMVP';
 import type { Message } from 'ai';
 
 interface ProductFactoryMode {
@@ -77,6 +78,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
           </span>
         </div>
         <ProductBuilderMvp setPrompt={applyProductFactoryMode} />
+        <MarketplacePackGeneratorMvp setPrompt={applyProductFactoryMode} />
         <div className="flex flex-wrap gap-2">
           {productFactoryModes.map((mode) => (
             <button
