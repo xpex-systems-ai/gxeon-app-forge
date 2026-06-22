@@ -6,6 +6,7 @@ import { MarketplacePackGeneratorMvp } from '~/components/gxeon/MarketplacePackG
 import { CheckoutBlueprintMvp } from '~/components/gxeon/CheckoutBlueprintMVP';
 import { LandingBuilderMvp } from '~/components/gxeon/LandingBuilderMVP';
 import { ContentFactoryMvp } from '~/components/gxeon/ContentFactoryMVP';
+import { IntegrationReadinessMvp } from '~/components/gxeon/IntegrationReadinessMVP';
 import type { Message } from 'ai';
 
 interface ProductFactoryMode {
@@ -28,6 +29,7 @@ const MACHINE_STATUS = [
   'Marketplaces em roadmap',
   'Landing Builder MVP manual-first',
   'Content Factory MVP manual-first',
+  'Integration Readiness DRY_RUN_ONLY',
 ];
 
 const MODULES = [
@@ -36,6 +38,7 @@ const MODULES = [
   { title: 'Marketplace Pack Generator', subtitle: 'Packs comerciais sem APIs reais' },
   { title: 'Checkout Blueprint', subtitle: 'Preço, plano e pós-compra manual' },
   { title: 'Content Factory', subtitle: 'Posts, emails e roteiros' },
+  { title: 'Integration Readiness', subtitle: 'Schemas, payloads e gates DRY_RUN_ONLY' },
   { title: 'CRM Inbox', subtitle: 'Leads e follow-up' },
   { title: 'Deploy Center', subtitle: 'GitHub, Railway e Vercel' },
   { title: 'Revenue Ledger', subtitle: 'Canais, vendas e evidências' },
@@ -87,6 +90,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
         <CheckoutBlueprintMvp setPrompt={applyProductFactoryMode} />
         <LandingBuilderMvp setPrompt={applyProductFactoryMode} />
         <ContentFactoryMvp setPrompt={applyProductFactoryMode} />
+        <IntegrationReadinessMvp setPrompt={applyProductFactoryMode} />
         <div className="flex flex-wrap gap-2">
           {productFactoryModes.map((mode) => (
             <button
