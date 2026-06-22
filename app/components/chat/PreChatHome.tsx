@@ -6,6 +6,8 @@ import { MarketplacePackGeneratorMvp } from '~/components/gxeon/MarketplacePackG
 import { CheckoutBlueprintMvp } from '~/components/gxeon/CheckoutBlueprintMVP';
 import { LandingBuilderMvp } from '~/components/gxeon/LandingBuilderMVP';
 import { ContentFactoryMvp } from '~/components/gxeon/ContentFactoryMVP';
+import { IntegrationReadinessMvp } from '~/components/gxeon/IntegrationReadinessMVP';
+import { ApprovalLedgerMvp } from '~/components/gxeon/ApprovalLedgerMVP';
 import type { Message } from 'ai';
 
 interface ProductFactoryMode {
@@ -28,6 +30,8 @@ const MACHINE_STATUS = [
   'Marketplaces em roadmap',
   'Landing Builder MVP manual-first',
   'Content Factory MVP manual-first',
+  'Integration Readiness DRY_RUN_ONLY',
+  'Approval Ledger local-only',
 ];
 
 const MODULES = [
@@ -36,6 +40,8 @@ const MODULES = [
   { title: 'Marketplace Pack Generator', subtitle: 'Packs comerciais sem APIs reais' },
   { title: 'Checkout Blueprint', subtitle: 'Preço, plano e pós-compra manual' },
   { title: 'Content Factory', subtitle: 'Posts, emails e roteiros' },
+  { title: 'Integration Readiness', subtitle: 'Schemas, payloads e gates DRY_RUN_ONLY' },
+  { title: 'Approval Ledger', subtitle: 'Aprovações, riscos e evidências locais' },
   { title: 'CRM Inbox', subtitle: 'Leads e follow-up' },
   { title: 'Deploy Center', subtitle: 'GitHub, Railway e Vercel' },
   { title: 'Revenue Ledger', subtitle: 'Canais, vendas e evidências' },
@@ -87,6 +93,8 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
         <CheckoutBlueprintMvp setPrompt={applyProductFactoryMode} />
         <LandingBuilderMvp setPrompt={applyProductFactoryMode} />
         <ContentFactoryMvp setPrompt={applyProductFactoryMode} />
+        <IntegrationReadinessMvp setPrompt={applyProductFactoryMode} />
+        <ApprovalLedgerMvp />
         <div className="flex flex-wrap gap-2">
           {productFactoryModes.map((mode) => (
             <button
@@ -126,7 +134,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#d9a441]">Módulos</p>
             <h2 className="text-lg font-black text-white">Sistema compacto da forja</h2>
           </div>
-          <span className="text-[11px] text-white/45">8 módulos</span>
+          <span className="text-[11px] text-white/45">9 módulos</span>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {MODULES.map((module) => (

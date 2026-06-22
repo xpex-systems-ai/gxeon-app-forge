@@ -11,6 +11,17 @@ import {
   MARKETPLACE_PACK_DRAFT_STORAGE_KEY,
   CAMPAIGN_TONES,
   PRODUCT_BUILDER_DRAFT_STORAGE_KEY,
+  CAMPAIGN_GOALS,
+  CAMPAIGN_TONES,
+  CONTENT_CHANNELS,
+  CONTENT_FACTORY_STORAGE_KEY,
+  CTA_MODES,
+  LANDING_BUILDER_DRAFT_STORAGE_KEY,
+  LANDING_GOALS,
+  MARKETPLACE_PACK_DRAFT_STORAGE_KEY,
+  POSTING_CADENCES,
+  PRODUCT_BUILDER_DRAFT_STORAGE_KEY,
+  CHECKOUT_BLUEPRINT_DRAFT_STORAGE_KEY,
   buildContentFactoryJson,
   buildContentFactoryMarkdown,
   buildContentFactoryOutput,
@@ -48,6 +59,17 @@ const CAMPAIGN_GOAL_LABELS = {
   validation: 'Validação',
   waitlist: 'Waitlist',
   launch: 'Lançamento',
+  technical: 'Técnico',
+  popular: 'Popular',
+  institutional: 'Institucional',
+  story: 'Story',
+  authority: 'Autoridade',
+};
+const GOAL2_LABELS = {
+  awareness: 'Awareness',
+  validation: 'Validação',
+  waitlist: 'Waitlist',
+  launch: 'Launch',
   presale: 'Pré-venda',
   nurture: 'Nutrição',
   retargeting: 'Retargeting',
@@ -67,6 +89,7 @@ export function ContentFactoryMvp({ setPrompt }: Props) {
   const [draft, setDraft] = useState<ContentFactoryDraft>(() => createEmptyContentFactoryDraft());
   const [status, setStatus] = useState(
     'Content Factory local: gera posts, emails, roteiros, prompt, Markdown e JSON sem postagem, envio ou APIs.',
+    'Content Factory local: gera content pack, prompt, Markdown e JSON sem posts, envios ou APIs.',
   );
   const [generatedAt, setGeneratedAt] = useState<string | null>(null);
   const [allowSparse, setAllowSparse] = useState(false);
@@ -121,6 +144,7 @@ export function ContentFactoryMvp({ setPrompt }: Props) {
     setGeneratedAt(new Date().toISOString());
     setAllowSparse(false);
     setStatus('Content Pack gerado localmente. Nada foi postado, enviado, agendado, impulsionado ou publicado.');
+    setStatus('Content Pack gerado localmente. Nada foi postado, enviado, agendado ou impulsionado.');
   };
   const sendToComposer = () => {
     setPrompt(prompt || buildContentFactoryPrompt(normalizedDraft));
@@ -175,6 +199,7 @@ export function ContentFactoryMvp({ setPrompt }: Props) {
     'Gumroad',
     'Shopify',
     'Content Page',
+    'Landing Page',
     'WhatsApp',
     'Email',
     'Marketplace manual',
@@ -195,6 +220,7 @@ export function ContentFactoryMvp({ setPrompt }: Props) {
           <span className="block text-sm font-black text-white">
             Content and launch pack local — sem postagem, envio ou APIs
           </span>
+          <span className="block text-sm font-black text-white">Campanha local — sem posts, envios, ads ou APIs</span>
         </span>
         <span className="rounded-full border border-[#d9a441]/30 px-2 py-1 text-[10px] text-[#d9a441]">
           {isOpen ? 'Recolher' : 'Abrir'}
@@ -205,6 +231,7 @@ export function ContentFactoryMvp({ setPrompt }: Props) {
           <p className="rounded-xl border border-white/10 bg-white/[0.03] p-2 text-xs leading-5 text-white/62">
             Módulo manual-first: importa rascunhos locais somente por botão, gera preview/export local e não posta, não
             envia email/WhatsApp, não cria anúncios e não chama API externa. Rascunho:{' '}
+            envia email/WhatsApp, não cria ads, não agenda e não chama API externa. Rascunho:{' '}
             <code>{CONTENT_FACTORY_STORAGE_KEY}</code>.
           </p>
           <div className="grid gap-2 md:grid-cols-2">
@@ -258,6 +285,13 @@ export function ContentFactoryMvp({ setPrompt }: Props) {
               labels={TONE_LABELS}
             />
             <Select
+              label="Objetivo da campanha"
+              value={draft.campaignGoal}
+              onChange={(campaignGoal) => updateDraft({ campaignGoal })}
+              options={CAMPAIGN_GOALS}
+              labels={GOAL2_LABELS}
+            />
+            <Select
               label="Cadência"
               value={draft.postingCadence}
               onChange={(postingCadence) => updateDraft({ postingCadence })}
@@ -276,6 +310,9 @@ export function ContentFactoryMvp({ setPrompt }: Props) {
             <legend className="px-1 text-xs font-semibold text-white/70">Plataformas selecionadas</legend>
             <div className="flex flex-wrap gap-2">
               {platformOptions.map((p) => (
+            <legend className="px-1 text-xs font-semibold text-white/70">Canais de conteúdo</legend>
+            <div className="flex flex-wrap gap-2">
+              {CONTENT_CHANNELS.map((p) => (
                 <label
                   key={p}
                   className="flex items-center gap-1 rounded-full border border-white/10 px-2 py-1 text-xs text-white/65"
@@ -284,6 +321,14 @@ export function ContentFactoryMvp({ setPrompt }: Props) {
                     type="checkbox"
                     checked={normalizedDraft.selectedPlatforms.includes(p)}
                     onChange={() => togglePlatform(p)}
+                    checked={normalizedDraft.contentChannels.includes(p)}
+                    onChange={() =>
+                      updateDraft({
+                        contentChannels: normalizedDraft.contentChannels.includes(p)
+                          ? normalizedDraft.contentChannels.filter((c) => c !== p)
+                          : [...normalizedDraft.contentChannels, p],
+                      })
+                    }
                   />
                   {p}
                 </label>
@@ -294,6 +339,9 @@ export function ContentFactoryMvp({ setPrompt }: Props) {
             <legend className="px-1 text-xs font-semibold text-white/70">Canais de conteúdo</legend>
             <div className="flex flex-wrap gap-2">
               {CONTENT_CHANNELS.map((p) => (
+            <legend className="px-1 text-xs font-semibold text-white/70">Plataformas selecionadas</legend>
+            <div className="flex flex-wrap gap-2">
+              {platformOptions.map((p) => (
                 <label
                   key={p}
                   className="flex items-center gap-1 rounded-full border border-white/10 px-2 py-1 text-xs text-white/65"
@@ -302,6 +350,8 @@ export function ContentFactoryMvp({ setPrompt }: Props) {
                     type="checkbox"
                     checked={normalizedDraft.contentChannels.includes(p)}
                     onChange={() => toggleChannel(p)}
+                    checked={normalizedDraft.selectedPlatforms.includes(p)}
+                    onChange={() => togglePlatform(p)}
                   />
                   {p}
                 </label>
@@ -404,6 +454,7 @@ export function ContentFactoryMvp({ setPrompt }: Props) {
               onClick={() =>
                 importStored(
                   LANDING_BUILDER_STORAGE_KEY,
+                  LANDING_BUILDER_DRAFT_STORAGE_KEY,
                   (v) => ({
                     sourceProductIdea: v.sourceProductIdea,
                     sourceNiche: v.sourceNiche,
@@ -447,6 +498,15 @@ export function ContentFactoryMvp({ setPrompt }: Props) {
                   title="Calendário"
                   lines={content.launchCalendar.map((s) => `${s.day}: ${s.task} (${s.status})`)}
                 />
+                  Prévia local — não postada/enviada
+                </span>
+              </div>
+              <div className="grid gap-2 md:grid-cols-2">
+                <Preview title="Hero" lines={content.positioning} />
+                <Preview title="CTA" lines={content.contentAngles} />
+                <Preview title="FAQ" lines={content.emailSequence.map((e) => e.subject)} />
+                <Preview title="Prova" lines={content.whatsappManualFollowups.map((w) => w.label)} />
+                <Preview title="Seções" lines={content.launchCalendar.map((s) => `${s.day}: ${s.task}`)} />
                 <Preview title="Riscos" lines={content.riskWarnings} />
               </div>
               <details className="mt-3 rounded-lg border border-white/10 bg-black/35 p-2">
