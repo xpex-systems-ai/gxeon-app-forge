@@ -10,6 +10,7 @@ import {
   createEmptyProductBuilderDraft,
   normalizeProductBuilderDraft,
   stringifyProductBlueprintJson,
+  validateProductBuilderDraft,
   type ProductBuilderDraft,
 } from '~/lib/gxeon/productBuilder';
 
@@ -44,8 +45,11 @@ const TONE_LABELS: Record<(typeof PRODUCT_TONES)[number], string> = {
 export function ProductBuilderMvp({ setPrompt }: ProductBuilderMVPProps) {
   const [isOpen, setIsOpen] = useState(true);
   const [draft, setDraft] = useState<ProductBuilderDraft>(() => createEmptyProductBuilderDraft());
-  const [status, setStatus] = useState('Preencha os campos e gere um blueprint local.');
+  const [status, setStatus] = useState(
+    'Preencha os campos essenciais e gere um blueprint local, seguro e manual-first.',
+  );
   const [generatedAt, setGeneratedAt] = useState<string | null>(null);
+  const [allowSparseBlueprint, setAllowSparseBlueprint] = useState(false);
 
   const normalizedDraft = useMemo(() => normalizeProductBuilderDraft(draft, draft.updatedAt), [draft]);
   const blueprint = useMemo(
@@ -73,9 +77,25 @@ export function ProductBuilderMvp({ setPrompt }: ProductBuilderMVPProps) {
   };
 
   const generateBlueprint = () => {
+    const validation = validateProductBuilderDraft(normalizedDraft);
+
+    if (!validation.isStrongBlueprintReady && !allowSparseBlueprint) {
+      setAllowSparseBlueprint(true);
+      setStatus(
+        'Preencha ideia, nicho, público e problema para um blueprint mais forte. Clique em Gerar Blueprint novamente para continuar com fallback seguro.',
+      );
+
+      return;
+    }
+
     setDraft(normalizedDraft);
     setGeneratedAt(new Date().toISOString());
-    setStatus('Blueprint gerado localmente. Nada foi enviado ao LLM.');
+    setAllowSparseBlueprint(false);
+    setStatus(
+      validation.isStrongBlueprintReady
+        ? 'Blueprint premium gerado localmente. Nada foi enviado ao LLM.'
+        : 'Blueprint gerado com fallback seguro. Revise os campos antes de usar comercialmente.',
+    );
   };
 
   const sendToComposer = () => {
@@ -84,37 +104,82 @@ export function ProductBuilderMvp({ setPrompt }: ProductBuilderMVPProps) {
     setStatus('Prompt enviado para o compositor. Revise e envie manualmente quando quiser.');
   };
 
-  const copyMarkdown = async () => {
-    const nextMarkdown = markdown || buildProductBlueprintMarkdown(normalizedDraft);
+  const copyText = async (value: string, successMessage: string) => {
+    if (!navigator.clipboard?.writeText) {
+      setStatus('Área de transferência indisponível neste navegador. Copie manualmente pelo bloco de prévia.');
+      return;
+    }
 
     try {
-      await navigator.clipboard.writeText(nextMarkdown);
-      setStatus('Markdown copiado para a área de transferência.');
+      await navigator.clipboard.writeText(value);
+      setStatus(successMessage);
     } catch (error) {
       console.error('Product Builder clipboard error:', error);
-      setStatus('Não foi possível copiar automaticamente. Use a prévia para copiar manualmente.');
+      setStatus('Não foi possível copiar automaticamente. Copie manualmente pelo bloco de prévia.');
     }
   };
 
+  const copyMarkdown = () => {
+    void copyText(
+      markdown || buildProductBlueprintMarkdown(normalizedDraft),
+      'Markdown copiado. Revise antes de publicar ou vender.',
+    );
+  };
+
+  const copyPrompt = () => {
+    void copyText(
+      prompt || buildProductBlueprintPrompt(normalizedDraft),
+      'Prompt copiado. Cole no Composer e envie manualmente quando quiser.',
+    );
+  };
+
   const exportJson = () => {
-    const json = stringifyProductBlueprintJson(normalizedDraft);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `gxeon-product-blueprint-${Date.now()}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-    setStatus('JSON exportado localmente pelo navegador.');
+    let url: string | null = null;
+    let link: HTMLAnchorElement | null = null;
+
+    try {
+      const json = stringifyProductBlueprintJson(normalizedDraft);
+      const blob = new Blob([json], { type: 'application/json' });
+      url = URL.createObjectURL(blob);
+      link = document.createElement('a');
+      link.href = url;
+      link.download = `gxeon-product-blueprint-${Date.now()}.json`;
+      document.body.appendChild(link);
+      link.click();
+      setStatus('JSON exportado localmente. Arquivo sem chaves, cookies ou integrações reais.');
+    } catch (error) {
+      console.error('Product Builder export error:', error);
+      setStatus('Não foi possível exportar o JSON neste navegador. Tente novamente ou copie o Markdown.');
+    } finally {
+      link?.remove();
+
+      if (url) {
+        URL.revokeObjectURL(url);
+      }
+    }
   };
 
   const saveDraft = () => {
-    localStorage.setItem(PRODUCT_BUILDER_STORAGE_KEY, JSON.stringify(normalizedDraft));
-    setStatus('Rascunho salvo somente neste navegador.');
+    try {
+      localStorage.setItem(PRODUCT_BUILDER_STORAGE_KEY, JSON.stringify(normalizedDraft));
+      setStatus('Rascunho salvo somente neste navegador. Nenhuma chave ou segredo é armazenado.');
+    } catch (error) {
+      console.error('Product Builder draft save error:', error);
+      setStatus('Não foi possível salvar o rascunho local. O navegador pode estar em modo privado ou sem espaço.');
+    }
   };
 
   const loadDraft = () => {
-    const stored = localStorage.getItem(PRODUCT_BUILDER_STORAGE_KEY);
+    let stored: string | null = null;
+
+    try {
+      stored = localStorage.getItem(PRODUCT_BUILDER_STORAGE_KEY);
+    } catch (error) {
+      console.error('Product Builder draft read error:', error);
+      setStatus('Não foi possível acessar o rascunho local. Verifique permissões de armazenamento do navegador.');
+
+      return;
+    }
 
     if (!stored) {
       setStatus('Nenhum rascunho local encontrado neste navegador.');
@@ -137,11 +202,11 @@ export function ProductBuilderMvp({ setPrompt }: ProductBuilderMVPProps) {
   };
 
   return (
-    <div className="mb-3 rounded-2xl border border-[#d9a441]/25 bg-black/35 p-3">
+    <div className="mb-3 overflow-hidden rounded-2xl border border-[#d9a441]/25 bg-[linear-gradient(135deg,#05060a_0%,#0d0b08_54%,#171006_100%)] shadow-[0_18px_60px_rgba(0,0,0,0.3)]">
       <button
         type="button"
         onClick={() => setIsOpen((value) => !value)}
-        className="flex w-full items-center justify-between gap-3 text-left"
+        className="flex w-full items-center justify-between gap-3 border-b border-[#d9a441]/15 bg-black/25 p-3 text-left"
         aria-expanded={isOpen}
       >
         <span>
@@ -156,11 +221,11 @@ export function ProductBuilderMvp({ setPrompt }: ProductBuilderMVPProps) {
       </button>
 
       {isOpen && (
-        <div className="mt-3 space-y-3">
+        <div className="space-y-3 p-3">
           <p className="rounded-xl border border-white/10 bg-white/[0.03] p-2 text-xs leading-5 text-white/62">
-            Gera uma prévia e um prompt profissional no navegador. Rascunho salvo apenas em localStorage:{' '}
-            <code>{PRODUCT_BUILDER_STORAGE_KEY}</code>. Sem pagamentos, marketplaces, banco de dados ou envio
-            automático.
+            Central local para lapidar oferta, avatar, preço e go-to-market manual. Rascunho apenas em localStorage:{' '}
+            <code>{PRODUCT_BUILDER_STORAGE_KEY}</code>. Sem pagamentos, APIs de marketplace, banco de dados ou
+            auto-send.
           </p>
 
           <div className="grid gap-2 md:grid-cols-2">
@@ -277,6 +342,7 @@ export function ProductBuilderMvp({ setPrompt }: ProductBuilderMVPProps) {
             <Action onClick={generateBlueprint}>Gerar Blueprint</Action>
             <Action onClick={sendToComposer}>Enviar para Composer</Action>
             <Action onClick={copyMarkdown}>Copiar Markdown</Action>
+            <Action onClick={copyPrompt}>Copiar Prompt</Action>
             <Action onClick={exportJson}>Exportar JSON</Action>
             <Action onClick={saveDraft}>Salvar Rascunho</Action>
             <Action onClick={loadDraft}>Carregar Rascunho</Action>
@@ -289,16 +355,31 @@ export function ProductBuilderMvp({ setPrompt }: ProductBuilderMVPProps) {
 
           {blueprint && (
             <div className="rounded-xl border border-[#d9a441]/20 bg-[#07080d] p-3 text-xs text-white/70">
-              <h3 className="mb-2 text-sm font-black text-white">Prévia do Blueprint</h3>
+              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                <h3 className="text-sm font-black text-white">Prévia do Blueprint</h3>
+                <span className="rounded-full border border-[#d9a441]/25 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#d9a441]">
+                  Prévia local — nada enviado ao LLM
+                </span>
+              </div>
               <div className="grid gap-2 md:grid-cols-2">
                 <Preview title="Nomes" lines={blueprint.nameSuggestions} />
-                <Preview title="Entregáveis" lines={blueprint.deliverables} />
-                <Preview title="Landing page" lines={blueprint.landingPageStructure} />
-                <Preview title="Checklist humano" lines={blueprint.humanApprovalChecklist} />
+                <Preview title="Avatar" lines={[blueprint.avatar]} />
+                <Preview title="Oferta" lines={[blueprint.coreOffer, blueprint.promise, blueprint.transformation]} />
+                <Preview title="Preço" lines={[blueprint.pricingHypothesis]} />
+                <Preview title="Landing" lines={blueprint.landingPageStructure} />
+                <Preview title="Marketplace Pack" lines={blueprint.marketplacePackFields} />
+                <Preview title="Conteúdo" lines={blueprint.contentAngles} />
+                <Preview title="Checklist Humano" lines={blueprint.humanApprovalChecklist} />
+                <Preview title="Próximos Passos" lines={blueprint.nextSteps} />
               </div>
-              <pre className="mt-3 max-h-52 overflow-auto whitespace-pre-wrap rounded-lg bg-black/45 p-2 text-[11px] text-white/62">
-                {buildProductBlueprintJson(normalizedDraft).prompt}
-              </pre>
+              <details className="mt-3 rounded-lg border border-white/10 bg-black/35 p-2">
+                <summary className="cursor-pointer text-[11px] font-bold uppercase tracking-[0.12em] text-[#d9a441]">
+                  Prompt bruto copiável
+                </summary>
+                <pre className="mt-2 max-h-52 overflow-auto whitespace-pre-wrap rounded-lg bg-black/45 p-2 text-[11px] text-white/62">
+                  {buildProductBlueprintJson(normalizedDraft).prompt}
+                </pre>
+              </details>
             </div>
           )}
         </div>
@@ -345,7 +426,7 @@ function Action({ children, onClick }: { children: React.ReactNode; onClick: () 
 
 function Preview({ title, lines }: { title: string; lines: string[] }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.03] p-2">
+    <div className="rounded-lg border border-[#d9a441]/15 bg-black/30 p-2">
       <p className="font-bold text-[#d9a441]">{title}</p>
       <ul className="mt-1 list-disc pl-4">
         {lines.map((line) => (
