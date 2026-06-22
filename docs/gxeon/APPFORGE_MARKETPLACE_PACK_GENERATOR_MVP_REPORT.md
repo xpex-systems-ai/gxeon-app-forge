@@ -1,19 +1,21 @@
 # APPFORGE-003 Marketplace Pack Generator MVP Report
 
-## What it does
-Marketplace Pack Generator MVP converts manual product inputs or a local Product Builder draft into marketplace-ready copy packs for human review. It produces title, descriptions, SEO fields, categories, tags, FAQ, guarantee/refund notes, asset checklist, affiliate copy, launch posts, platform-specific checklist, human approval checklist, risk warnings, next steps, Markdown, JSON and a Composer prompt.
+## Status
+Marketplace Pack Generator MVP is implemented as a compact, collapsible Product Factory module. It prepares product metadata, copy, assets, FAQ, affiliate copy, launch posts, risk warnings, and human approval checklists for manual marketplace review.
 
-## What it does not do
-It does not call marketplace APIs, publish products, activate payments, create checkout links, post to social networks, persist to a database, send prompts automatically to an LLM, or store credentials.
+## Manual-first boundaries
+- No OAuth, client secrets, API keys, marketplace API clients, SDK posting, checkout generation, payment processing, database persistence, auto-publishing, or external API calls are included.
+- The module produces local preview, Markdown, JSON export, and a composer handoff only.
+- Composer handoff fills the real composer prompt and focuses it; it does not send the message.
 
-## Supported platform labels
-Hotmart, Kiwify, Eduzz, Monetizze, Braip, Perfect Pay, ClickBank, Gumroad, Lemon Squeezy, Mercado Livre, Shopee, Shopify, WooCommerce and Generic Marketplace.
+## Product Builder preservation
+The Product Builder MVP remains visible before Marketplace Pack. Marketplace Pack may import a local browser draft only after the operator clicks **Usar rascunho local do Product Builder**.
 
-## Local-only behavior
-Drafts are saved only in browser localStorage under `gxeon.marketplacePack.draft.v1`. Optional Product Builder reuse reads only `gxeon.productBuilder.draft.v1` and maps product fields into Marketplace Pack fields.
-
-## Safety confirmation
-No secrets, marketplace clients, payment integrations, checkout generation, external API calls or database persistence were added. The module is manual-first and requires human approval before publication, payment activation or marketplace use.
+## Platform mapping summary
+- Hotmart, Kiwify, Eduzz, Monetizze, Braip, Perfect Pay: short name, descriptions, modules, guarantee notes, FAQ, affiliate copy, and access terms.
+- Shopee, Mercado Livre: optimized title, objective description, image checklist, delivery clarity, and digital-delivery policy risk warning.
+- Shopify, WooCommerce: product page structure, button microcopy, SEO, legal pages, thank-you page, and manual checkout review.
+- ClickBank, Gumroad, Lemon Squeezy: product description, support, refund/terms, and manual review checklist.
 
 ## APPFORGE-004 readiness
-The next Checkout Blueprint MVP can consume these pack outputs as manual planning inputs, but must continue avoiding live payment activation until an explicit future integration milestone approves it.
+Checkout Blueprint can start when manual pricing, terms, refund policy, post-purchase experience, and platform-specific compliance notes are approved by a human operator.

@@ -1,17 +1,14 @@
-# APPFORGE Marketplace Pack Manual Validation
+# Marketplace Pack Manual Validation
 
-1. Open GXEON App Forge and confirm Product Builder remains visible.
-2. Open Marketplace Pack Generator MVP in Product Factory Mode.
-3. Fill product idea, niche, audience, problem, offer, promise, price, delivery format, category and notes.
-4. Select Hotmart, Kiwify and Shopee.
-5. Click **Gerar Marketplace Pack** and confirm local preview sections appear.
-6. Confirm no external publishing, checkout, payment or marketplace API action occurs.
-7. Click **Enviar para Composer** and confirm the textarea is populated without auto-send.
-8. Click **Copiar Prompt** and **Copiar Markdown**.
-9. Click **Exportar JSON** and inspect the downloaded file for safety flags and absence of secret fields.
-10. Click **Salvar Rascunho**, reload, and click **Carregar Rascunho**.
-11. If Product Builder has a local draft, click **Usar rascunho local do Product Builder** and confirm local browser data mapping only.
-12. Confirm provider/model controls, API key UI, Import Chat, Import Folder and Clone a repo remain accessible.
-
-## Boundaries
-Manual approval is required before any marketplace listing, affiliate setting, payment setup, checkout activation or publication. This MVP is a local drafting and export tool only.
+1. Open Product Factory Mode.
+2. Confirm Product Builder remains usable.
+3. Open Marketplace Pack Generator MVP.
+4. Optionally click **Usar rascunho local do Product Builder** and confirm the status says the source was local browser storage.
+5. Fill product idea, niche, audience, offer or promise, and select platforms such as Hotmart, Kiwify, Shopee, and Shopify.
+6. Click **Gerar Marketplace Pack**.
+7. Confirm the preview includes short titles, copy, SEO, FAQ, guarantee notes, assets, affiliate copy, launch posts, human approval, risks, and next steps.
+8. Confirm the prompt includes visible `<gxeon_context_payload>{...}</gxeon_context_payload>`.
+9. Click **Enviar para Composer** and verify the textarea is populated but not sent.
+10. Test **Copiar Prompt**, **Copiar Markdown**, **Exportar JSON**, **Salvar Rascunho**, **Carregar Rascunho**, and **Limpar**.
+11. Inspect exported JSON for no forbidden secret-like fields.
+12. Confirm no marketplace, checkout, payment, database, or external API activity occurs.

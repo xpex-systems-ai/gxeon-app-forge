@@ -1,17 +1,16 @@
-# APPFORGE Marketplace Pack Schema
+# Marketplace Pack Schema
 
-## MarketplacePlatform
-`hotmart`, `kiwify`, `eduzz`, `monetizze`, `braip`, `perfect_pay`, `clickbank`, `gumroad`, `lemon_squeezy`, `mercado_livre`, `shopee`, `shopify`, `woocommerce`, `generic`.
+## Storage key
+`gxeon.marketplacePack.draft.v1` is used only in browser `localStorage`.
 
-## MarketplacePackDraft
-Fields: `sourceProductIdea`, `sourceNiche`, `sourceAudience`, `sourceProblem`, `sourceOffer`, `sourcePromise`, `sourcePrice`, `deliveryFormat`, `selectedPlatforms`, `mainCategory`, `tone`, `approvalNotes`, `createdAt`, `updatedAt`.
+## Draft
+`MarketplacePackDraft` stores product context: source product idea, niche, audience, problem, offer, promise, price, delivery format, selected platforms, category, tone, approval notes, and timestamps.
 
-Recommended fields are product idea, niche, audience, offer or promise, and at least one selected platform.
+## Output
+`MarketplacePackOutput` contains short commercial titles, product title, descriptions, SEO fields, categories, tags, FAQ, guarantee notes, asset checklist, affiliate copy, launch posts, platform checklist, human approval checklist, risk warnings, and next steps.
 
-## MarketplacePackOutput
-Fields: `productTitle`, `shortDescription`, `longDescription`, `seoTitle`, `seoDescription`, `categories`, `tags`, `faq`, `guaranteeNotes`, `assetChecklist`, `affiliateCopy`, `launchPosts`, `platformChecklist`, `humanApprovalChecklist`, `riskWarnings`, `nextSteps`.
+## Export
+`MarketplacePackExport` contains draft, pack, visible context payload, prompt, Markdown, safety flags, and exported timestamp.
 
-## MarketplacePackExport
-Fields: `draft`, `pack`, `prompt`, `markdown`, `safety`, `exportedAt`.
-
-Safety flags are always `manualFirst`, `noGuaranteedIncome`, `noAutoPublishing`, `noLivePayments`, `noMarketplaceApiExecution` and `localOnlyDraft`.
+## Safety flags
+Exports mark manual-first operation, no guaranteed income, no auto-publishing, no live payments, no marketplace API execution, and local-only draft behavior.
