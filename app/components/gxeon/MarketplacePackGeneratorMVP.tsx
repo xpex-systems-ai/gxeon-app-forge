@@ -362,6 +362,7 @@ export function MarketplacePackGeneratorMvp({ setPrompt }: MarketplacePackGenera
                 </span>
               </div>
               <div className="grid gap-2 md:grid-cols-2">
+                <Preview title="Títulos curtos" lines={pack.shortCommercialTitles} />
                 <Preview
                   title="Copy"
                   lines={[pack.productTitle, pack.shortDescription, pack.seoTitle, pack.seoDescription]}

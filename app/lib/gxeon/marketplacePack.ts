@@ -80,6 +80,7 @@ export interface MarketplacePackDraft {
 }
 
 export interface MarketplacePackOutput {
+  shortCommercialTitles: string[];
   productTitle: string;
   shortDescription: string;
   longDescription: string;
@@ -101,6 +102,7 @@ export interface MarketplacePackOutput {
 export interface MarketplacePackExport {
   draft: MarketplacePackDraft;
   pack: MarketplacePackOutput;
+  contextPayload: string;
   prompt: string;
   markdown: string;
   safety: {
@@ -140,6 +142,42 @@ function cleanPlatforms(values: unknown): MarketplacePlatform[] {
       input.filter((item): item is MarketplacePlatform => MARKETPLACE_PLATFORMS.includes(item as MarketplacePlatform)),
     ),
   );
+}
+
+export function generateShortCommercialTitles(draftInput: Partial<MarketplacePackDraft>): string[] {
+  const draft = normalizeMarketplacePackDraft(draftInput, draftInput.updatedAt || FALLBACK_DATE);
+  const ideaWords = (draft.sourceProductIdea || draft.sourceNiche || 'GXEON Pack')
+    .replace(/[^\p{L}\p{N} ]/gu, ' ')
+    .split(/\s+/)
+    .filter(Boolean)
+    .filter(
+      (word) => !['de', 'da', 'do', 'das', 'dos', 'para', 'com', 'e', 'curso', 'ebook'].includes(word.toLowerCase()),
+    );
+  const anchor = ideaWords[0] || 'GXEON';
+  const niche = (draft.sourceNiche || 'Digital').split(/\s+/).filter(Boolean)[0] || 'Digital';
+  const audience = (draft.sourceAudience || 'Pro').split(/\s+/).filter(Boolean)[0] || 'Pro';
+  const candidates = [`${anchor} IA`, `${audience} Lead OS`, `IA ${niche} Leads`, `${anchor} Pack`, `${niche} Pro`];
+
+  return Array.from(new Set(candidates))
+    .map((title) => title.split(/\s+/).slice(0, 3).join(' '))
+    .filter((title) => !/(renda|garantid|milion|dinheiro fácil|lucro certo)/i.test(title))
+    .slice(0, 5);
+}
+
+export function buildGxeonContextPayload(draftInput: Partial<MarketplacePackDraft>): string {
+  const draft = normalizeMarketplacePackDraft(draftInput, draftInput.updatedAt || FALLBACK_DATE);
+  return JSON.stringify({
+    idea: draft.sourceProductIdea,
+    niche: draft.sourceNiche,
+    audience: draft.sourceAudience,
+    problem: draft.sourceProblem,
+    offer: draft.sourceOffer,
+    promise: draft.sourcePromise,
+    price: draft.sourcePrice,
+    channels: draft.selectedPlatforms.map((platform) => MARKETPLACE_PLATFORM_LABELS[platform]),
+    deliveryFormat: draft.deliveryFormat,
+    tone: draft.tone,
+  });
 }
 
 function ensureTone(value: unknown): MarketplacePackTone {
@@ -221,26 +259,29 @@ function checklistForPlatform(platform: MarketplacePlatform): string[] {
 
   if (['hotmart', 'kiwify', 'eduzz', 'monetizze', 'braip', 'perfect_pay'].includes(platform)) {
     return [
-      'Conferir campos de produto digital, descrição, suporte, garantia e termos.',
+      'Definir nome curto do produto digital e descrições curta/longa para revisão manual.',
+      'Organizar módulos, aulas, bônus ou entregáveis sem prometer resultado financeiro.',
+      'Escrever notas de garantia/reembolso, FAQ, copy para afiliados e termos de acesso.',
       'Preparar página de vendas e criativos sem ativar checkout real.',
-      'Revisar configuração de afiliados manualmente, se aplicável.',
       ...shared,
     ];
   }
 
   if (['mercado_livre', 'shopee'].includes(platform)) {
     return [
-      'Validar se o formato do produto é aceito pela política da plataforma.',
-      'Preparar imagens, título dentro do limite e clareza de entrega/envio.',
-      'Conferir reputação, suporte, reembolso e regras de produto digital/físico.',
+      'Criar título otimizado e descrição objetiva sem alegar publicação ativa.',
+      'Preparar checklist de imagens, mockups e clareza visual do que será entregue.',
+      'Explicar entrega/envio com clareza e validar a política da plataforma para produto digital/híbrido.',
+      'Adicionar alerta de risco: Shopee/Mercado Livre podem restringir entrega digital.',
       ...shared,
     ];
   }
 
   if (['shopify', 'woocommerce'].includes(platform)) {
     return [
-      'Preparar página de loja e página do produto com políticas legais.',
-      'Revisar checkout, impostos, frete/entrega e emails antes de ativar pagamentos.',
+      'Estruturar página do produto: hero, benefícios, entregáveis, FAQ e CTA manual.',
+      'Definir microcopy de botão sem ativar pagamento ou checkout neste MVP.',
+      'Preparar SEO, páginas legais, página de obrigado e revisão manual de checkout.',
       'Confirmar que nenhum gateway está sendo configurado por este MVP.',
       ...shared,
     ];
@@ -248,7 +289,8 @@ function checklistForPlatform(platform: MarketplacePlatform): string[] {
 
   if (['clickbank', 'gumroad', 'lemon_squeezy'].includes(platform)) {
     return [
-      'Revisar descrição, suporte, termos, refund policy e compliance.',
+      'Preparar descrição do produto, suporte, termos e política de reembolso/refund.',
+      'Montar checklist de revisão manual para ClickBank/Gumroad/Lemon Squeezy.',
       'Preparar assets e preço para revisão manual antes de publicar.',
       'Confirmar que o MVP não cria checkout nem produto real.',
       ...shared,
@@ -278,6 +320,7 @@ export function buildMarketplacePackOutput(draftInput: MarketplacePackDraft): Ma
   );
 
   return {
+    shortCommercialTitles: generateShortCommercialTitles(draft),
     productTitle: `${idea} — ${category}`,
     shortDescription: `${offer} para ${audience}, com revisão humana e execução manual-first.`,
     longDescription: `${idea} ajuda ${audience} no nicho de ${niche} a lidar com ${problem}. A oferta proposta é ${offer}, sustentada pela promessa: ${promise}. O pack é um rascunho comercial para revisão manual; ele não publica, não cobra, não cria checkout e não chama APIs de marketplace.`,
@@ -353,7 +396,7 @@ export function buildMarketplacePackPrompt(draftInput: MarketplacePackDraft): st
   const promptPlatforms: MarketplacePlatform[] = draft.selectedPlatforms.length ? draft.selectedPlatforms : ['generic'];
   const platformLabels = promptPlatforms.map((platform) => MARKETPLACE_PLATFORM_LABELS[platform]);
 
-  return `Você é o Marketplace Pack Generator MVP do GXEON App Forge. Gere e refine um marketplace-ready copy pack em português, mantendo operação manual-first e aprovação humana.
+  return `Você é o Marketplace Pack Generator MVP do GXEON App Forge. Atue como Especialista em empacotamento comercial, copywriter, especialista em regras de marketplace e validador de aprovação humana. Gere e refine um marketplace-ready copy pack em português, estruturado e manualmente revisável, mantendo operação manual-first e aprovação humana.
 
 REGRAS OBRIGATÓRIAS:
 - Manual-first: nenhuma publicação automática.
@@ -361,6 +404,9 @@ REGRAS OBRIGATÓRIAS:
 - Não ative pagamento, checkout, gateway, links de cobrança ou processamento financeiro.
 - Não prometa renda garantida, lucro certo ou resultado inevitável.
 - Exija human approval antes de publicar, cobrar, conectar marketplace ou usar afiliados.
+
+CONTEXTO AUDITÁVEL:
+<gxeon_context_payload>${buildGxeonContextPayload(draft)}</gxeon_context_payload>
 
 ENTRADAS:
 - Produto: ${draft.sourceProductIdea || 'não informado'}
@@ -377,6 +423,7 @@ ENTRADAS:
 - Notas: ${draft.approvalNotes || 'sem notas'}
 
 PRÉVIA LOCAL:
+- Títulos curtos sugeridos: ${pack.shortCommercialTitles.join(', ')}
 - Título: ${pack.productTitle}
 - Descrição curta: ${pack.shortDescription}
 
@@ -403,6 +450,9 @@ export function buildMarketplacePackMarkdown(draftInput: MarketplacePackDraft): 
 - **Promessa:** ${draft.sourcePromise || 'Não informada'}
 - **Preço:** ${draft.sourcePrice || 'Não informado'}
 - **Formato:** ${draft.deliveryFormat || 'Não informado'}
+
+## Títulos curtos comerciais
+${list(pack.shortCommercialTitles)}
 
 ## Copy e SEO
 - **Título:** ${pack.productTitle}
@@ -461,6 +511,7 @@ export function buildMarketplacePackJson(
   return {
     draft,
     pack,
+    contextPayload: buildGxeonContextPayload(draft),
     prompt,
     markdown: buildMarketplacePackMarkdown(draft),
     safety: {
