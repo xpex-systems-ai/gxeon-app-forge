@@ -18,6 +18,15 @@ export const PRODUCT_TONES = ['direct', 'premium', 'technical', 'popular', 'inst
 export type ProductType = (typeof PRODUCT_TYPES)[number];
 export type ProductTone = (typeof PRODUCT_TONES)[number];
 
+export const PRODUCT_BUILDER_RECOMMENDED_FIELDS = ['idea', 'niche', 'targetAudience', 'problem'] as const;
+
+export type ProductBuilderRecommendedField = (typeof PRODUCT_BUILDER_RECOMMENDED_FIELDS)[number];
+
+export interface ProductBuilderValidationResult {
+  missingRecommendedFields: ProductBuilderRecommendedField[];
+  isStrongBlueprintReady: boolean;
+}
+
 export interface ProductBuilderDraft {
   idea: string;
   niche: string;
@@ -153,6 +162,15 @@ export function normalizeProductBuilderDraft(input: Partial<ProductBuilderDraft>
     approvalNotes: clean(input.approvalNotes),
     createdAt: clean(input.createdAt) || now,
     updatedAt: now,
+  };
+}
+
+export function validateProductBuilderDraft(input: Partial<ProductBuilderDraft>): ProductBuilderValidationResult {
+  const missingRecommendedFields = PRODUCT_BUILDER_RECOMMENDED_FIELDS.filter((field) => !clean(input[field]));
+
+  return {
+    missingRecommendedFields,
+    isStrongBlueprintReady: missingRecommendedFields.length === 0,
   };
 }
 

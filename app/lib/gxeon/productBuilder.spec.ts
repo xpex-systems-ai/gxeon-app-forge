@@ -3,6 +3,7 @@ import {
   buildProductBlueprintPrompt,
   createEmptyProductBuilderDraft,
   stringifyProductBlueprintJson,
+  validateProductBuilderDraft,
   type ProductBuilderDraft,
 } from './productBuilder';
 
@@ -51,7 +52,28 @@ describe('Product Builder helpers', () => {
     expect(prompt).toContain('não faça promessas de renda garantida');
     expect(prompt).toContain('não execute pagamentos reais');
     expect(prompt).toContain('não acione apis de marketplace');
+    expect(prompt).toContain('aprovação humana');
     expect(prompt).toContain('nada deve ser publicado');
+  });
+
+  it('flags missing recommended fields without blocking sparse fallback generation', () => {
+    const validation = validateProductBuilderDraft({
+      ...sampleDraft,
+      idea: '',
+      niche: ' ',
+      targetAudience: '',
+      problem: '',
+    });
+
+    expect(validation.isStrongBlueprintReady).toBe(false);
+    expect(validation.missingRecommendedFields).toEqual(['idea', 'niche', 'targetAudience', 'problem']);
+  });
+
+  it('accepts drafts with the recommended fields filled', () => {
+    expect(validateProductBuilderDraft(sampleDraft)).toEqual({
+      missingRecommendedFields: [],
+      isStrongBlueprintReady: true,
+    });
   });
 
   it('exports JSON without secret-like or API key fields', () => {
