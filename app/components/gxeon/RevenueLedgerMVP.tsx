@@ -127,7 +127,8 @@ export function RevenueLedgerMvp() {
   const clear = () => {
     if (window.confirm('Clear local Revenue Ledger entries?')) {
       setEntries([]);
-      setStatus('Ledger cleared locally.');
+      window.localStorage.removeItem(REVENUE_LEDGER_STORAGE_KEY);
+      setStatus('Revenue Ledger cleared locally; only its localStorage entry was removed.');
     }
   };
 
