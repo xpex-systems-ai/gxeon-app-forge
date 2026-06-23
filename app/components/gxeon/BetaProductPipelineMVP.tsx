@@ -74,7 +74,7 @@ export function BetaProductPipelineMvp() {
   const summary = useMemo(() => summarizeBetaPipelineItems(items), [items]);
   const updateForm = (patch: Partial<BetaProductPipelineItem>) =>
     setForm((cur) => normalizeBetaPipelineItem({ ...cur, ...patch, updatedAt: new Date().toISOString() }));
-  const addProduct = (item = form) => {
+  const addProduct = (item: Partial<BetaProductPipelineItem> = form) => {
     setItems((cur) => [createBetaPipelineItem(item), ...cur]);
     setForm(emptyForm());
     setStatus('Product added locally. Use Save Pipeline for browser localStorage persistence.');
