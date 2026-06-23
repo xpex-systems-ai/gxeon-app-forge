@@ -3,7 +3,6 @@ export const PRODUCT_BUILDER_DRAFT_STORAGE_KEY = 'gxeon.productBuilder.draft.v1'
 export const MARKETPLACE_PACK_DRAFT_STORAGE_KEY = 'gxeon.marketplacePack.draft.v1';
 export const CHECKOUT_BLUEPRINT_DRAFT_STORAGE_KEY = 'gxeon.checkoutBlueprint.draft.v1';
 export const LANDING_BUILDER_STORAGE_KEY = 'gxeon.landingBuilder.draft.v1';
-export const LANDING_BUILDER_DRAFT_STORAGE_KEY = 'gxeon.landingBuilder.draft.v1';
 
 export const LANDING_GOALS = ['waitlist', 'validation', 'sales_page', 'lead_capture', 'presale', 'internal'] as const;
 export const CAMPAIGN_GOALS = [
@@ -33,14 +32,6 @@ export const CONTENT_CHANNELS = [
   'WhatsApp manual',
   'Ads draft',
   'Launch calendar',
-  'instagram',
-  'linkedin',
-  'youtube_shorts',
-  'email',
-  'whatsapp_manual',
-  'ads_draft',
-  'landing_page',
-  'community',
 ] as const;
 export const POSTING_CADENCES = ['3_days', '7_days', '14_days', '30_days'] as const;
 export const CTA_MODES = [
@@ -53,11 +44,6 @@ export const CTA_MODES = [
 export type LandingGoal = (typeof LANDING_GOALS)[number];
 export type CampaignGoal = (typeof CAMPAIGN_GOALS)[number];
 export type CampaignTone = (typeof CAMPAIGN_TONES)[number];
-
-export type LandingGoal = (typeof LANDING_GOALS)[number];
-export type CampaignGoal = (typeof CAMPAIGN_GOALS)[number];
-export type CampaignTone = (typeof CAMPAIGN_TONES)[number];
-export type ContentChannel = (typeof CONTENT_CHANNELS)[number];
 export type PostingCadence = (typeof POSTING_CADENCES)[number];
 export type CtaMode = (typeof CTA_MODES)[number];
 
@@ -121,8 +107,6 @@ export type ContentFactoryRecommendedField =
   | 'sourceOfferOrPromise'
   | 'contentChannels'
   | 'ctaMode';
-  | 'campaignGoal'
-  | 'contentChannels';
 export interface ContentFactoryValidationResult {
   missingRecommendedFields: ContentFactoryRecommendedField[];
   isStrongContentFactoryReady: boolean;
@@ -139,13 +123,6 @@ const CTA_LABELS: Record<CtaMode, string> = {
   request_access: 'Solicitar acesso',
   checkout_later: 'Revisar oferta antes do checkout',
   download_preview: 'Baixar prévia',
-  /api_?key|apikey|token|access_token|refresh_token|secret|client_secret|password|credential|cookie|stripe_key|webhook_secret|social_token|email_api_key|whatsapp_token|ads_token/i;
-const CTA_LABELS: Record<CtaMode, string> = {
-  manual_contact: 'fale com um operador',
-  waitlist: 'entre na lista de espera',
-  request_access: 'solicite acesso',
-  checkout_later: 'revise a oferta antes do checkout',
-  download_preview: 'baixe a prévia',
 };
 
 function nowIso() {
@@ -186,8 +163,6 @@ export function createEmptyContentFactoryDraft(now = nowIso()): ContentFactoryDr
     campaignGoal: 'validation',
     campaignTone: 'premium',
     contentChannels: ['Instagram', 'LinkedIn', 'Email'],
-    campaignTone: 'direct',
-    contentChannels: [],
     postingCadence: '7_days',
     ctaMode: 'manual_contact',
     proofNotes: '',
@@ -210,7 +185,6 @@ export function normalizeContentFactoryDraft(input: Partial<ContentFactoryDraft>
     landingGoal: ensure(LANDING_GOALS, input.landingGoal, 'validation'),
     campaignGoal: ensure(CAMPAIGN_GOALS, input.campaignGoal, 'validation'),
     campaignTone: ensure(CAMPAIGN_TONES, input.campaignTone, 'premium'),
-    campaignTone: ensure(CAMPAIGN_TONES, input.campaignTone, 'direct'),
     contentChannels: cleanList(input.contentChannels),
     postingCadence: ensure(POSTING_CADENCES, input.postingCadence, '7_days'),
     ctaMode: ensure(CTA_MODES, input.ctaMode, 'manual_contact'),
@@ -241,12 +215,6 @@ export function validateContentFactoryDraft(input: Partial<ContentFactoryDraft>)
 
   if (!clean(input.ctaMode)) {
     missing.push('ctaMode');
-  if (!clean(input.campaignGoal)) {
-    missing.push('campaignGoal');
-  }
-
-  if (!cleanList(input.contentChannels).length) {
-    missing.push('contentChannels');
   }
 
   return { missingRecommendedFields: missing, isStrongContentFactoryReady: missing.length === 0 };
@@ -296,13 +264,6 @@ export function buildContentFactoryOutput(draftInput: Partial<ContentFactoryDraf
   const offer = d.sourceOffer || product;
   const cta = CTA_LABELS[d.ctaMode];
   const proof = d.proofNotes || 'PLACEHOLDER: inserir prova real somente após verificação humana.';
-  const product = d.sourceProductIdea || 'produto digital GXEON';
-  const audience = d.sourceAudience || 'público a validar manualmente';
-  const problem = d.sourceProblem || 'problema principal ainda em validação';
-  const offer = d.sourceOffer || product;
-  const promise = d.sourcePromise || 'organizar a execução com aprovação humana, sem prometer resultados garantidos';
-  const cta = CTA_LABELS[d.ctaMode];
-  const proof = d.proofNotes || 'PLACEHOLDER DE PROVA: adicionar evidência real somente após verificação.';
 
   return {
     positioning: [
@@ -326,27 +287,6 @@ export function buildContentFactoryOutput(draftInput: Partial<ContentFactoryDraf
       {
         title: 'Oferta em revisão',
         caption: `${product} está em modo de validação. Nada foi publicado automaticamente; revise a promessa e peça acesso se fizer sentido.`,
-      `Problema: ${problem}.`,
-      `Promessa segura: ${promise}.`,
-      `Oferta: ${offer}; preço-base: ${d.basePrice || 'a validar'}.`,
-    ],
-    contentAngles: [
-      'Dor principal sem sensacionalismo',
-      'Bastidores da construção manual-first',
-      'Comparativo antes/depois sem garantia',
-      'Objeções e respostas',
-      'Prova verificada ou placeholder explícito',
-      'Convite para validação humana',
-    ],
-    instagramPosts: [
-      {
-        title: 'Dor principal',
-        caption: `${audience}: se ${problem} está travando sua execução, este rascunho organiza a próxima conversa. ${proof}`,
-        cta,
-      },
-      {
-        title: 'Bastidores',
-        caption: `Estamos estruturando ${product} com oferta, CTA e revisão humana antes de qualquer publicação.`,
         cta,
       },
     ],
@@ -359,13 +299,6 @@ export function buildContentFactoryOutput(draftInput: Partial<ContentFactoryDraf
       {
         title: 'Aprendizado de validação',
         body: `Hipótese: ${problem}. Resposta: campanha local com conteúdo, email, WhatsApp manual e calendário — sem APIs de envio ou posts automáticos.`,
-        title: `Por que ${product} existe`,
-        body: `Para ${audience}, o custo de improvisar é alto. A proposta é transformar ${problem} em um plano revisável, manual-first e sem automações de envio.`,
-        cta,
-      },
-      {
-        title: 'Blueprint de lançamento seguro',
-        body: `Oferta: ${offer}. Promessa: ${promise}. Próximo passo: revisão humana de claims, prova e CTA.`,
         cta,
       },
     ],
@@ -379,14 +312,6 @@ export function buildContentFactoryOutput(draftInput: Partial<ContentFactoryDraf
         hook: 'Três peças antes de lançar uma oferta.',
         script:
           '1) ângulo seguro, 2) prova verificável, 3) CTA manual. Sem renda garantida, sem disparo, sem auto-posting.',
-        hook: `Você ainda está tentando vender ${product} sem uma narrativa?`,
-        script: `Cena 1: mostre o problema (${problem}). Cena 2: apresente a oferta (${offer}). Cena 3: explique que tudo passa por aprovação humana antes de publicar ou enviar.`,
-        cta,
-      },
-      {
-        hook: '3 pontos para revisar antes do lançamento',
-        script:
-          'Cheque promessa, prova e CTA. Remova qualquer garantia de renda, cura, resultado legal ou investimento. Use canais manuais primeiro.',
         cta,
       },
     ],
@@ -404,18 +329,6 @@ export function buildContentFactoryOutput(draftInput: Partial<ContentFactoryDraf
       {
         subject: 'Próximo passo seguro',
         body: `Se fizer sentido, solicite acesso ou baixe a prévia. Nenhum checkout automático foi ativado por este MVP.`,
-        subject: `Convite para revisar ${product}`,
-        body: `Olá, estamos validando ${offer} para ${audience}. Este email é um rascunho para envio manual, sem automação em massa.`,
-        cta,
-      },
-      {
-        subject: 'O problema que estamos resolvendo',
-        body: `O foco é ${problem}. A promessa revisável é: ${promise}.`,
-        cta,
-      },
-      {
-        subject: 'Próxima etapa manual',
-        body: `Se fizer sentido, responda manualmente para revisar a prévia ou solicitar acesso.`,
         cta,
       },
     ],
@@ -427,11 +340,6 @@ export function buildContentFactoryOutput(draftInput: Partial<ContentFactoryDraf
       {
         label: 'Follow-up consentido',
         message: `Passando para saber se a promessa “${promise}” faz sentido para você. Se não quiser receber, me avise e paro por aqui.`,
-        message: `Oi! Estou validando ${product} para ${audience}. Posso te enviar uma prévia para revisão manual?`,
-      },
-      {
-        label: 'Follow-up sem spam',
-        message: `Passando só para confirmar se você quer revisar ${offer}. Sem envio automático; responda quando fizer sentido.`,
       },
     ],
     adAngleDrafts: [
@@ -489,55 +397,6 @@ export function buildContentFactoryOutput(draftInput: Partial<ContentFactoryDraf
       'Enviar prompt ao Composer somente para refinar o rascunho.',
       'Copiar Markdown/JSON para validação manual.',
       'Preparar APPFORGE-007 Integration Readiness Layer sem ativar distribuição real.',
-        angle: 'Dor + clareza',
-        headline: `Organize ${problem}`,
-        body: `Rascunho de anúncio para revisão humana. Posicione ${product} sem promessa garantida.`,
-        safetyNote: 'Revisar claims, segmentação, prova, política da plataforma e CTA antes de usar manualmente.',
-      },
-      {
-        angle: 'Validação',
-        headline: `Prévia de ${product}`,
-        body: `Convite para solicitar acesso ou entrar em waitlist; sem falsa escassez ou depoimentos inventados.`,
-        safetyNote: 'Não criar campanha automaticamente; usar somente após aprovação humana e revisão legal.',
-      },
-    ],
-    launchCalendar: ['D-7', 'D-5', 'D-3', 'D-1', 'D0'].map((day, i) => ({
-      day,
-      task: [
-        'Revisar claims e ativos',
-        'Post educacional',
-        'Email manual de validação',
-        'Checklist final',
-        'Publicação manual aprovada',
-      ][i],
-      channel: d.contentChannels[i % Math.max(d.contentChannels.length, 1)] || 'manual',
-      status: 'rascunho local — não agendado',
-    })),
-    assetChecklist: [
-      'Criativos quadrados e verticais',
-      'Landing/copy revisada',
-      'Lista manual de contatos autorizados',
-      'Provas verificadas ou placeholders marcados',
-      'Termos e políticas revisados',
-    ],
-    humanApprovalChecklist: [
-      'Revisar claims de renda, saúde, jurídico e financeiro.',
-      'Validar prova e remover placeholders antes do uso público.',
-      'Aprovar CTA, oferta, preço e segmentação.',
-      'Confirmar regras de cada plataforma.',
-      'Confirmar que nenhum envio/post/ads será automatizado neste MVP.',
-    ],
-    riskWarnings: [
-      'Não usar como spam ou disparo em massa.',
-      'Não fabricar depoimentos, prints, endossos ou escassez.',
-      'Não prometer renda, cura, resultado legal ou retorno financeiro.',
-      'Não afirmar publicação, agendamento, impulsionamento ou integração live.',
-    ],
-    nextSteps: [
-      'Gerar prompt e revisar no Composer sem auto-envio.',
-      'Ajustar copy com operador humano.',
-      'Exportar JSON/Markdown para documentação.',
-      'Preparar APPFORGE-007 Integration Readiness Layer.',
     ],
   };
 }
@@ -550,16 +409,6 @@ export function buildContentFactoryMarkdown(draftInput: Partial<ContentFactoryDr
   const block = (title: string, lines: string[]) => `## ${title}\n${lines.map((l) => `- ${l}`).join('\n')}`;
   const objBlock = (title: string, rows: unknown[]) =>
     `## ${title}\n\`\`\`json\n${JSON.stringify(rows, null, 2)}\n\`\`\``;
-  return `Você é o Content Factory MVP da GXEON App Forge. Gere campanha manual-first com aprovação humana obrigatória. Regras obrigatórias: no auto-posting, no external send/no external sending, no social API calls/no-social-api, no email API calls/no-email-api, no WhatsApp API calls/no-whatsapp-api, no ads API calls, no guaranteed income claims, no spam, no fake engagement, human approval required. Use este payload visível e sanitizado:\n${buildContentContextPayload(draftInput)}\nRetorne positioning, content angles, Instagram drafts, LinkedIn drafts, YouTube Shorts hooks/scripts, email sequence manual, WhatsApp manual follow-up, ad angle drafts com safetyNote, launch calendar, asset checklist, approval checklist, risks e next steps.`;
-}
-
-function block(title: string, lines: string[]) {
-  return `## ${title}\n${lines.map((l) => `- ${l}`).join('\n')}`;
-}
-
-export function buildContentFactoryMarkdown(draftInput: Partial<ContentFactoryDraft>): string {
-  const d = normalizeContentFactoryDraft(draftInput, draftInput.updatedAt || FALLBACK_DATE);
-  const o = buildContentFactoryOutput(d);
 
   return [
     `# Content Factory MVP — ${d.sourceProductIdea || 'Rascunho'}`,
@@ -572,35 +421,6 @@ export function buildContentFactoryMarkdown(draftInput: Partial<ContentFactoryDr
     objBlock('WhatsApp manual follow-ups', o.whatsappManualFollowups),
     objBlock('Ad angle drafts', o.adAngleDrafts),
     objBlock('Launch calendar', o.launchCalendar),
-    block('Content Angles', o.contentAngles),
-    block(
-      'Instagram',
-      o.instagramPosts.map((p) => `${p.title}: ${p.caption} CTA: ${p.cta}`),
-    ),
-    block(
-      'LinkedIn',
-      o.linkedinPosts.map((p) => `${p.title}: ${p.body} CTA: ${p.cta}`),
-    ),
-    block(
-      'YouTube Shorts',
-      o.youtubeShorts.map((s) => `${s.hook} — ${s.script} CTA: ${s.cta}`),
-    ),
-    block(
-      'Email Sequence',
-      o.emailSequence.map((e) => `${e.subject}: ${e.body} CTA: ${e.cta}`),
-    ),
-    block(
-      'WhatsApp manual',
-      o.whatsappManualFollowups.map((w) => `${w.label}: ${w.message}`),
-    ),
-    block(
-      'Ad angles draft',
-      o.adAngleDrafts.map((a) => `${a.angle}: ${a.headline} — ${a.body} Safety: ${a.safetyNote}`),
-    ),
-    block(
-      'Launch calendar',
-      o.launchCalendar.map((c) => `${c.day} | ${c.channel} | ${c.task} | ${c.status}`),
-    ),
     block('Asset checklist', o.assetChecklist),
     block('Human approval checklist', o.humanApprovalChecklist),
     block('Risk warnings', o.riskWarnings),
