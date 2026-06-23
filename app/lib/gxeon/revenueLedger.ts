@@ -221,10 +221,12 @@ export function calculateRevenueLedgerSummary(entriesInput: Partial<RevenueLedge
     operatorConfirmedCount: entries.filter((e) => e.status === 'operator_confirmed').length,
   };
 }
-export function buildRevenueLedgerMarkdown(entriesInput: Partial<RevenueLedgerEntry>[], exportedAt = nowIso()) {
-  const entries = entriesInput.map((e) => normalizeRevenueLedgerEntry(e, e.updatedAt || exportedAt));
-  const summary = calculateRevenueLedgerSummary(entries);
 
+function buildRevenueLedgerMarkdownPayload(
+  entries: RevenueLedgerEntry[],
+  summary: RevenueLedgerSummary,
+  exportedAt: string,
+) {
   return [
     '# GXEON Revenue Ledger MVP',
     '',
@@ -261,15 +263,24 @@ export function buildRevenueLedgerMarkdown(entriesInput: Partial<RevenueLedgerEn
     ]),
   ].join('\n');
 }
+
+export function buildRevenueLedgerMarkdown(entriesInput: Partial<RevenueLedgerEntry>[], exportedAt = nowIso()) {
+  const entries = entriesInput.map((e) => normalizeRevenueLedgerEntry(e, e.updatedAt || exportedAt));
+  const summary = calculateRevenueLedgerSummary(entries);
+
+  return buildRevenueLedgerMarkdownPayload(entries, summary, exportedAt);
+}
 export function buildRevenueLedgerJson(
   entriesInput: Partial<RevenueLedgerEntry>[],
   exportedAt = nowIso(),
 ): RevenueLedgerExport {
   const entries = entriesInput.map((e) => normalizeRevenueLedgerEntry(e, e.updatedAt || exportedAt));
+  const summary = calculateRevenueLedgerSummary(entries);
+
   return sanitizeRevenueLedgerObject({
     entries,
-    summary: calculateRevenueLedgerSummary(entries),
-    markdown: buildRevenueLedgerMarkdown(entries, exportedAt),
+    summary,
+    markdown: buildRevenueLedgerMarkdownPayload(entries, summary, exportedAt),
     safety: {
       localOnly: true,
       noPaymentProcessing: true,

@@ -99,6 +99,50 @@ describe('revenueLedger', () => {
     expect(md).toContain('not financial advice');
     expect(md).toContain('not tax documentation');
   });
+
+  it('uses one normalized entry set for JSON summary and markdown totals', () => {
+    const exportedAt = '2026-02-01T00:00:00.000Z';
+    const exported = buildRevenueLedgerJson(
+      [
+        {
+          productName: 'Planned offer',
+          plannedPrice: '297' as any,
+          estimatedCost: '20' as any,
+          quantity: '2' as any,
+          status: 'pending_manual_confirmation',
+        },
+        {
+          productName: 'Confirmed offer',
+          plannedPrice: 297,
+          manualConfirmedAmount: 197,
+          estimatedCost: 20,
+          status: 'operator_confirmed',
+        },
+        {
+          productName: 'Lost offer',
+          plannedPrice: 50,
+          estimatedCost: 5,
+          status: 'lost',
+        },
+      ],
+      exportedAt,
+    );
+    const recalculated = calculateRevenueLedgerSummary(exported.entries);
+
+    expect(exported.summary).toEqual(recalculated);
+    expect(exported.summary.plannedTotal).toBe(941);
+    expect(exported.summary.operatorConfirmedTotal).toBe(197);
+    expect(exported.summary.estimatedCostTotal).toBe(45);
+    expect(exported.summary.netEstimateTotal).toBe(796);
+    expect(exported.summary.pendingManualConfirmation).toBe(1);
+    expect(exported.summary.lostOrCancelled).toBe(1);
+    expect(exported.summary.operatorConfirmedCount).toBe(1);
+    expect(exported.markdown).toContain(`- Planned total: ${exported.summary.plannedTotal}`);
+    expect(exported.markdown).toContain(`- Operator confirmed total: ${exported.summary.operatorConfirmedTotal}`);
+    expect(exported.markdown).toContain(`- Estimated costs: ${exported.summary.estimatedCostTotal}`);
+    expect(exported.markdown).toContain(`- Net estimate: ${exported.summary.netEstimateTotal}`);
+  });
+
   it('builds JSON export with required flags', () => {
     const exported = buildRevenueLedgerJson([]);
     expect(exported.safety.noPaymentProcessing).toBe(true);
