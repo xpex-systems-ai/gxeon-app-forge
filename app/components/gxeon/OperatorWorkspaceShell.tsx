@@ -33,9 +33,9 @@ export function OperatorWorkspaceShell({ renderModule }: OperatorWorkspaceShellP
   return (
     <div
       data-testid="gxeon-operator-workspace-shell"
-      className="mt-3 rounded-2xl border border-[#d9a441]/25 bg-black/35 p-2.5 shadow-[inset_0_1px_0_rgba(217,164,65,0.12)]"
+      className="mt-3 rounded-2xl border border-[#d9a441]/30 bg-[radial-gradient(circle_at_top_left,rgba(217,164,65,0.10),transparent_34%),rgba(0,0,0,0.54)] p-2.5 shadow-[inset_0_1px_0_rgba(217,164,65,0.14),0_18px_60px_rgba(0,0,0,0.30)]"
     >
-      <div className="mb-2 flex flex-col gap-2 rounded-xl border border-[#d9a441]/15 bg-[#090a0f] p-3 md:flex-row md:items-start md:justify-between">
+      <div className="mb-2 flex flex-col gap-2 rounded-xl border border-[#d9a441]/20 bg-[#07080d]/95 p-3 md:flex-row md:items-start md:justify-between">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#d9a441]">Command Center Tabs</p>
           <h3 className="mt-1 text-base font-black text-white">Operator Workspace</h3>
@@ -44,7 +44,7 @@ export function OperatorWorkspaceShell({ renderModule }: OperatorWorkspaceShellP
             organizam a forja; ações internas continuam manuais e dentro de cada módulo.
           </p>
         </div>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap">
           {SAFETY_STRIP.map((item) => (
             <span
               key={item}
@@ -56,7 +56,11 @@ export function OperatorWorkspaceShell({ renderModule }: OperatorWorkspaceShellP
         </div>
       </div>
 
-      <div className="mb-2 flex gap-1.5 overflow-x-auto pb-1" role="tablist" aria-label="GXEON Operator Workspace tabs">
+      <div
+        className="mb-2 flex gap-1.5 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-color:rgba(217,164,65,0.45)_rgba(255,255,255,0.06)]"
+        role="tablist"
+        aria-label="GXEON Operator Workspace tabs"
+      >
         {tabs.map((tab) => {
           const isActive = tab.id === activeTab.id;
 
@@ -68,20 +72,22 @@ export function OperatorWorkspaceShell({ renderModule }: OperatorWorkspaceShellP
               aria-selected={isActive}
               data-testid={`gxeon-operator-tab-${tab.id}`}
               onClick={() => setActiveTabId(tab.id)}
-              className={`min-w-[112px] rounded-xl border px-3 py-2 text-left transition-theme ${
+              className={`min-w-[104px] flex-[1_0_104px] rounded-xl border px-2.5 py-2 text-left transition-theme sm:min-w-[112px] sm:flex-[1_0_112px] ${
                 isActive
-                  ? 'border-[#d9a441]/70 bg-[#d9a441]/14 text-white shadow-[0_0_0_1px_rgba(217,164,65,0.16)]'
-                  : 'border-white/10 bg-white/[0.03] text-white/58 hover:border-[#d9a441]/35 hover:text-white'
+                  ? 'border-[#d9a441]/80 bg-[#d9a441]/18 text-white shadow-[0_0_0_1px_rgba(217,164,65,0.22),inset_0_1px_0_rgba(255,255,255,0.08)]'
+                  : 'border-white/10 bg-[#101116]/80 text-white/68 hover:border-[#d9a441]/40 hover:bg-[#d9a441]/8 hover:text-white'
               }`}
             >
-              <span className="block text-xs font-black">{tab.label}</span>
-              <span className="mt-0.5 block text-[10px] text-white/45">{tab.moduleKeys.length} módulo(s)</span>
+              <span className="block whitespace-nowrap text-xs font-black leading-4">{tab.label}</span>
+              <span className={`mt-0.5 block text-[10px] ${isActive ? 'text-[#f4d58d]' : 'text-white/48'}`}>
+                {tab.moduleKeys.length} módulo(s)
+              </span>
             </button>
           );
         })}
       </div>
 
-      <div className="mb-2 rounded-xl border border-white/10 bg-white/[0.025] p-2.5">
+      <div className="mb-2 rounded-xl border border-[#d9a441]/16 bg-[#090a0f]/85 p-2.5">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#d9a441]">{activeTab.label}</p>
@@ -91,18 +97,21 @@ export function OperatorWorkspaceShell({ renderModule }: OperatorWorkspaceShellP
         </div>
       </div>
 
-      <div className="mb-2 rounded-xl border border-[#d9a441]/14 bg-black/30 p-2" aria-label="Operator quick actions">
+      <div
+        className="mb-2 rounded-xl border border-[#d9a441]/18 bg-[#07080d]/90 p-2"
+        aria-label="Operator quick actions"
+      >
         <p className="mb-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#d9a441]">
           Quick actions — navegação
         </p>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 lg:flex lg:flex-wrap">
           {QUICK_ACTIONS.map((action) => (
             <button
               key={action.testId}
               type="button"
               data-testid={action.testId}
               onClick={() => setActiveTabId(action.tabId)}
-              className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] font-semibold text-white/62 transition-theme hover:border-[#d9a441]/35 hover:text-white"
+              className="rounded-full border border-white/10 bg-[#111217] px-2.5 py-1.5 text-center text-[11px] font-semibold text-white/70 transition-theme hover:border-[#d9a441]/40 hover:bg-[#d9a441]/10 hover:text-white"
             >
               {action.label}
             </button>
