@@ -1,9 +1,11 @@
 # GXEON Agent Safety Policy
 
-Agent-ready does not mean agent-autonomous. This layer only makes the local UI easier to operate safely by future agents under human supervision.
+Agent-ready does not mean autonomous execution. The operating layer is manual-first, local-only and human-approved.
 
-## Excluded features
-No browser automation runtime, no Playwright execution, no computer-control agent, no external APIs, no payments, no checkout creation or activation, no database, no webhooks, no n8n live connection, no publishing and no send actions.
+## Prohibited capabilities
+
+This mission excludes browser automation runtime, Playwright execution, Cypress execution, computer-control agents, external APIs, databases, Supabase persistence, payments, checkout links, webhooks, n8n live connections, OAuth, credentials, secrets, API keys, social posting, email sending, WhatsApp sending, marketplace integrations and auto-publishing.
 
 ## Data handling
-The agent action log is local-only and must not contain API keys, tokens, credentials, payment data or customer sensitive data. Secret-like field names are redacted in exports.
+
+Action-log exports sanitize secret-like field names and unsafe delimiters/control characters. Operators must not paste API keys, tokens, credentials, payment data or customer sensitive data into the log.

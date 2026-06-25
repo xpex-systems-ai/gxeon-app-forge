@@ -1,16 +1,17 @@
-# GXEON Agent Playbooks
+# GXEON Agent-Safe Playbooks
 
-Playbooks are data-only operating instructions. They are not automation scripts and do not invoke Playwright, Cypress, browser control or agent SDKs.
+Playbooks are data-only operating checklists for future human-approved agent assistance. They contain selector hints and expected local outputs, but no browser automation code and no external calls.
 
-## Included playbooks
-- create_product_from_idea
-- package_product_for_marketplace
-- prepare_checkout_blueprint
-- prepare_landing_blueprint
-- prepare_content_campaign
-- prepare_integration_dry_run
-- register_approval
-- move_to_beta_pipeline
-- register_revenue_hypothesis
+## Playbooks
 
-Every playbook ends with human approval or review.
+- `create_product_from_idea`
+- `package_product_for_marketplace`
+- `prepare_checkout_blueprint`
+- `prepare_landing_blueprint`
+- `prepare_content_campaign`
+- `prepare_integration_dry_run`
+- `register_approval`
+- `move_to_beta_pipeline`
+- `register_revenue_hypothesis`
+
+Each playbook stops for human approval or review before any external action.
