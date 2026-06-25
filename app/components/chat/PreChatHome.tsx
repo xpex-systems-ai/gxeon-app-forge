@@ -11,6 +11,7 @@ import { IntegrationReadinessMvp } from '~/components/gxeon/IntegrationReadiness
 import { ApprovalLedgerMvp } from '~/components/gxeon/ApprovalLedgerMVP';
 import { BetaProductPipelineMvp } from '~/components/gxeon/BetaProductPipelineMVP';
 import { RevenueLedgerMvp } from '~/components/gxeon/RevenueLedgerMVP';
+import { ProductCatalogMvp } from '~/components/gxeon/ProductCatalogMVP';
 import { AgentOperatingLayerMvp } from '~/components/gxeon/AgentOperatingLayerMVP';
 import { ProductCatalogMvp } from '~/components/gxeon/ProductCatalogMVP';
 import { OperatorWorkspaceShell } from '~/components/gxeon/OperatorWorkspaceShell';
@@ -44,6 +45,7 @@ const MACHINE_STATUS = [
   'Revenue Ledger local-only',
   'Product Catalog local-only',
   'Command Center tabs',
+  'Product Catalog local-only',
   'Agent-ready gated',
   'Human-approved gates',
 ];
@@ -63,6 +65,7 @@ const MODULES = [
   { title: 'Product Catalog', subtitle: 'Catálogo local consolidado com imports explícitos' },
   { title: 'Agent Operating Layer', subtitle: 'Seletores, playbooks e logs locais para agentes futuros' },
   { title: 'Command Center Tabs', subtitle: 'Workspace por abas para navegação local' },
+  { title: 'Product Catalog', subtitle: 'Biblioteca local de produtos e assets' },
 ];
 
 const FLOWS = [
@@ -184,6 +187,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#d9a441]">Módulos</p>
             <h2 className="text-lg font-black text-white">Sistema compacto da forja</h2>
           </div>
+          <span className="text-[11px] text-white/45">11 módulos + 7 abas</span>
           <span className="text-[11px] text-white/45">12 módulos + 7 abas</span>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">

@@ -12,6 +12,7 @@ describe('operator workspace metadata', () => {
     const ids = tabs.map((tab) => tab.id);
 
     expect(new Set(ids).size).toBe(ids.length);
+    expect(ids).toEqual(['create', 'package', 'monetize', 'validate', 'integrate', 'catalog', 'agent']);
     expect(ids).toEqual(['create', 'catalog', 'package', 'monetize', 'validate', 'integrate', 'agent']);
     expect(ids).toEqual(['create', 'package', 'catalog', 'monetize', 'validate', 'integrate', 'agent']);
   });
@@ -23,6 +24,9 @@ describe('operator workspace metadata', () => {
   it('returns accurate summary counts', () => {
     const summary = getOperatorWorkspaceSummary();
 
+    expect(summary.tabCount).toBe(7);
+    expect(summary.moduleCount).toBe(11);
+    expect(summary.tabIds).toEqual(['create', 'package', 'monetize', 'validate', 'integrate', 'catalog', 'agent']);
     expect(summary.tabCount).toBe(6);
     expect(summary.moduleCount).toBe(11);
     expect(summary.tabIds).toEqual(['create', 'package', 'monetize', 'validate', 'integrate', 'agent']);

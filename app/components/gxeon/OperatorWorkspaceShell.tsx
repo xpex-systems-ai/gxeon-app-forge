@@ -21,6 +21,7 @@ const QUICK_ACTIONS: { label: string; tabId: OperatorWorkspaceTabId; testId: str
   { label: 'Criar Conteúdo', tabId: 'package', testId: 'gxeon-operator-quick-create-content' },
   { label: 'Validar', tabId: 'validate', testId: 'gxeon-operator-quick-validate' },
   { label: 'Receita', tabId: 'monetize', testId: 'gxeon-operator-quick-revenue' },
+  { label: 'Catálogo', tabId: 'catalog', testId: 'gxeon-operator-quick-catalog' },
   { label: 'Agente', tabId: 'agent', testId: 'gxeon-operator-quick-agent' },
 ];
 
