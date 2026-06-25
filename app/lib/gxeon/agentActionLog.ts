@@ -11,6 +11,7 @@ export interface AgentActionLogEntry {
   riskLevel: AgentCommandRiskLevel;
   operatorNotes: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 const secretPattern = /(api[_-]?key|token|secret|credential|password|authorization|cookie|payment|card|customer)/gi;
@@ -36,6 +37,7 @@ export function normalizeAgentActionLogEntry(entry: Partial<AgentActionLogEntry>
       : 'low',
     operatorNotes: stripUnsafe(entry.operatorNotes),
     createdAt: stripUnsafe(entry.createdAt) || now,
+    updatedAt: stripUnsafe(entry.updatedAt) || now,
   };
 }
 
@@ -43,6 +45,7 @@ export function createAgentActionLogEntry(entry: Partial<AgentActionLogEntry>): 
   return normalizeAgentActionLogEntry({
     id: `agent-log-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     ...entry,
   });
 }
@@ -58,6 +61,12 @@ export function buildAgentActionLogJson(entries: Partial<AgentActionLogEntry>[])
   return {
     storageKey: AGENT_ACTION_LOG_STORAGE_KEY,
     localOnly: true,
+    safety: {
+      agentReadyNotAutonomous: true,
+      externalActionsBlocked: true,
+      sensitiveDataExcluded: true,
+      storage: 'browser localStorage only',
+    },
     entries: entries.map(normalizeAgentActionLogEntry),
   };
 }

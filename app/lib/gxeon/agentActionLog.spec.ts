@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildAgentActionLogMarkdown, stringifyAgentActionLogJson } from './agentActionLog';
+import { buildAgentActionLogJson, buildAgentActionLogMarkdown, stringifyAgentActionLogJson } from './agentActionLog';
 
 describe('agentActionLog', () => {
   it('sanitizes secret-like fields and delimiter/control characters from exports', () => {
@@ -17,5 +17,16 @@ describe('agentActionLog', () => {
     expect(json).not.toMatch(/api_key|password|secret|token|credential|\u0000|\|/i);
     expect(markdown).not.toMatch(/api_key|password|secret|token|credential|\u0000|\|/i);
     expect(json).toContain('[redacted-field]');
+  });
+
+  it('includes local-only safety flags and updated timestamps in JSON exports', () => {
+    const exportJson = buildAgentActionLogJson([{ actionLabel: 'Local review' }]);
+    expect(exportJson.localOnly).toBe(true);
+    expect(exportJson.safety).toMatchObject({
+      agentReadyNotAutonomous: true,
+      externalActionsBlocked: true,
+      sensitiveDataExcluded: true,
+    });
+    expect(exportJson.entries[0].updatedAt).toBeTruthy();
   });
 });

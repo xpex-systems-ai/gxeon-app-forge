@@ -151,6 +151,7 @@ export const BLOCKED_AGENT_COMMAND_DEFINITIONS: AgentCommandDefinition[] = [
   'WhatsApp',
   'social post',
   'marketplace deploy',
+  'n8n live run',
 ].map((label) =>
   safe(
     `blocked_${label.toLowerCase().replace(/\s+/g, '_')}`,
