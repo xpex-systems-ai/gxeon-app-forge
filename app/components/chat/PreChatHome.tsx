@@ -12,6 +12,7 @@ import { ApprovalLedgerMvp } from '~/components/gxeon/ApprovalLedgerMVP';
 import { BetaProductPipelineMvp } from '~/components/gxeon/BetaProductPipelineMVP';
 import { RevenueLedgerMvp } from '~/components/gxeon/RevenueLedgerMVP';
 import { AgentOperatingLayerMvp } from '~/components/gxeon/AgentOperatingLayerMVP';
+import { ProductCatalogMvp } from '~/components/gxeon/ProductCatalogMVP';
 import { OperatorWorkspaceShell } from '~/components/gxeon/OperatorWorkspaceShell';
 import type { OperatorWorkspaceModuleKey } from '~/lib/gxeon/operatorWorkspace';
 import type { Message } from 'ai';
@@ -57,6 +58,7 @@ const MODULES = [
   { title: 'Approval Ledger', subtitle: 'Aprovações, riscos e evidências locais' },
   { title: 'Beta Pipeline', subtitle: 'Estágios, prioridades e gates locais' },
   { title: 'Revenue Ledger', subtitle: 'Hipóteses, confirmações manuais e custos locais' },
+  { title: 'Product Catalog', subtitle: 'Catálogo local consolidado com imports explícitos' },
   { title: 'Agent Operating Layer', subtitle: 'Seletores, playbooks e logs locais para agentes futuros' },
   { title: 'Command Center Tabs', subtitle: 'Workspace por abas para navegação local' },
 ];
@@ -105,6 +107,8 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
         return <BetaProductPipelineMvp />;
       case 'RevenueLedgerMVP':
         return <RevenueLedgerMvp />;
+      case 'ProductCatalogMVP':
+        return <ProductCatalogMvp />;
       case 'AgentOperatingLayerMVP':
         return <AgentOperatingLayerMvp />;
       default:
