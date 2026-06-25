@@ -222,7 +222,10 @@ export function CheckoutBlueprintMvp({ setPrompt }: Props) {
   };
 
   return (
-    <div className="mb-3 overflow-hidden rounded-2xl border border-[#d9a441]/25 bg-[linear-gradient(135deg,#05060a_0%,#100d06_60%,#191104_100%)] shadow-[0_18px_60px_rgba(0,0,0,0.28)]">
+    <div
+      data-testid="gxeon-checkout-blueprint-container"
+      className="mb-3 overflow-hidden rounded-2xl border border-[#d9a441]/25 bg-[linear-gradient(135deg,#05060a_0%,#100d06_60%,#191104_100%)] shadow-[0_18px_60px_rgba(0,0,0,0.28)]"
+    >
       <button
         type="button"
         onClick={() => setIsOpen((v) => !v)}
@@ -352,8 +355,12 @@ export function CheckoutBlueprintMvp({ setPrompt }: Props) {
             >
               Copiar Markdown
             </Action>
-            <Action onClick={exportJson}>Exportar JSON</Action>
-            <Action onClick={saveDraft}>Salvar Rascunho</Action>
+            <Action data-testid="gxeon-checkout-blueprint-export-json" onClick={exportJson}>
+              Exportar JSON
+            </Action>
+            <Action data-testid="gxeon-checkout-blueprint-save-draft" onClick={saveDraft}>
+              Salvar Rascunho
+            </Action>
             <Action onClick={loadDraft}>Carregar Rascunho</Action>
             <Action onClick={importProduct}>Usar rascunho local do Product Builder</Action>
             <Action onClick={importMarketplace}>Usar rascunho local do Marketplace Pack</Action>
@@ -459,11 +466,16 @@ function Select<T extends string>({
   );
 }
 
-function Action({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
+function Action({
+  children,
+  onClick,
+  ...props
+}: { children: React.ReactNode; onClick: () => void } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       type="button"
       onClick={onClick}
+      {...props}
       className="rounded-full border border-[#d9a441]/25 bg-[#d9a441]/10 px-3 py-1.5 text-xs font-semibold text-[#f4d28a] transition-theme hover:bg-[#d9a441]/20"
     >
       {children}
