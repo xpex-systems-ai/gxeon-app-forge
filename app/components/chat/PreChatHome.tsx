@@ -2,6 +2,7 @@ import React from 'react';
 import { ImportButtons } from '~/components/chat/chatExportAndImport/ImportButtons';
 import GitCloneButton from './GitCloneButton';
 import { ProductBuilderMvp } from '~/components/gxeon/ProductBuilderMVP';
+import { ProductCatalogMvp } from '~/components/gxeon/ProductCatalogMVP';
 import { MarketplacePackGeneratorMvp } from '~/components/gxeon/MarketplacePackGeneratorMVP';
 import { CheckoutBlueprintMvp } from '~/components/gxeon/CheckoutBlueprintMVP';
 import { LandingBuilderMvp } from '~/components/gxeon/LandingBuilderMVP';
@@ -12,7 +13,9 @@ import { BetaProductPipelineMvp } from '~/components/gxeon/BetaProductPipelineMV
 import { RevenueLedgerMvp } from '~/components/gxeon/RevenueLedgerMVP';
 import { ProductCatalogMvp } from '~/components/gxeon/ProductCatalogMVP';
 import { AgentOperatingLayerMvp } from '~/components/gxeon/AgentOperatingLayerMVP';
+import { ProductCatalogMvp } from '~/components/gxeon/ProductCatalogMVP';
 import { OperatorWorkspaceShell } from '~/components/gxeon/OperatorWorkspaceShell';
+import { ProductCatalogMvp } from '~/components/gxeon/ProductCatalogMVP';
 import type { OperatorWorkspaceModuleKey } from '~/lib/gxeon/operatorWorkspace';
 import type { Message } from 'ai';
 
@@ -40,6 +43,7 @@ const MACHINE_STATUS = [
   'Approval Ledger local-only',
   'Beta Product Pipeline local-only',
   'Revenue Ledger local-only',
+  'Product Catalog local-only',
   'Command Center tabs',
   'Product Catalog local-only',
   'Agent-ready gated',
@@ -48,6 +52,8 @@ const MACHINE_STATUS = [
 
 const MODULES = [
   { title: 'Product Builder', subtitle: 'Oferta, avatar e estrutura' },
+  { title: 'Product Catalog', subtitle: 'Catálogo local de produtos e assets' },
+  { title: 'Product Catalog', subtitle: 'Produtos e assets locais' },
   { title: 'Landing Builder', subtitle: 'Páginas de venda e captura' },
   { title: 'Marketplace Pack Generator', subtitle: 'Packs comerciais sem APIs reais' },
   { title: 'Checkout Blueprint', subtitle: 'Preço, plano e pós-compra manual' },
@@ -56,6 +62,7 @@ const MODULES = [
   { title: 'Approval Ledger', subtitle: 'Aprovações, riscos e evidências locais' },
   { title: 'Beta Pipeline', subtitle: 'Estágios, prioridades e gates locais' },
   { title: 'Revenue Ledger', subtitle: 'Hipóteses, confirmações manuais e custos locais' },
+  { title: 'Product Catalog', subtitle: 'Catálogo local consolidado com imports explícitos' },
   { title: 'Agent Operating Layer', subtitle: 'Seletores, playbooks e logs locais para agentes futuros' },
   { title: 'Command Center Tabs', subtitle: 'Workspace por abas para navegação local' },
   { title: 'Product Catalog', subtitle: 'Biblioteca local de produtos e assets' },
@@ -87,6 +94,8 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
     switch (moduleKey) {
       case 'ProductBuilderMVP':
         return <ProductBuilderMvp setPrompt={applyProductFactoryMode} />;
+      case 'ProductCatalogMVP':
+        return <ProductCatalogMvp />;
       case 'MarketplacePackGeneratorMVP':
         return <MarketplacePackGeneratorMvp setPrompt={applyProductFactoryMode} />;
       case 'CheckoutBlueprintMVP':
@@ -179,6 +188,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
             <h2 className="text-lg font-black text-white">Sistema compacto da forja</h2>
           </div>
           <span className="text-[11px] text-white/45">11 módulos + 7 abas</span>
+          <span className="text-[11px] text-white/45">12 módulos + 7 abas</span>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {MODULES.map((module) => (

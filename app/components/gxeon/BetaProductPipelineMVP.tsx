@@ -151,20 +151,20 @@ export function BetaProductPipelineMvp() {
   return (
     <section
       data-testid="gxeon-beta-pipeline-container"
-      className="my-3 rounded-2xl border border-[#d9a441]/25 bg-[#05060a] p-3 text-white"
+      className="my-3 rounded-2xl border border-[#d9a441]/30 bg-[#05060a] p-3 text-white shadow-[0_18px_55px_rgba(0,0,0,0.30)]"
     >
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between text-left"
+        className="flex w-full items-center justify-between gap-3 rounded-xl border border-[#d9a441]/18 bg-[#090a0f] px-3 py-2 text-left shadow-[inset_0_1px_0_rgba(217,164,65,0.10)] transition-theme hover:border-[#d9a441]/35 hover:bg-[#101116]"
       >
         <span>
           <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#d9a441]">
             Local-only beta pipeline
           </span>
-          <h3 className="text-base font-black">Beta Product Pipeline MVP</h3>
+          <h3 className="text-base font-black text-white">Beta Product Pipeline MVP</h3>
         </span>
-        <span className="rounded-full border border-[#d9a441]/25 px-2 py-1 text-xs">
+        <span className="shrink-0 rounded-full border border-[#d9a441]/35 bg-[#d9a441]/10 px-2.5 py-1 text-xs font-bold text-[#f4d58d]">
           {isOpen ? 'Collapse' : 'Open'}
         </span>
       </button>
