@@ -150,7 +150,10 @@ export function ApprovalLedgerMvp() {
   };
 
   return (
-    <section className="my-3 rounded-2xl border border-[#d9a441]/25 bg-[#05060a] p-3 text-white shadow-[0_18px_55px_rgba(0,0,0,0.35)]">
+    <section
+      data-testid="gxeon-approval-ledger-container"
+      className="my-3 rounded-2xl border border-[#d9a441]/25 bg-[#05060a] p-3 text-white shadow-[0_18px_55px_rgba(0,0,0,0.35)]"
+    >
       <button
         type="button"
         onClick={() => setIsOpen((v) => !v)}
@@ -243,7 +246,11 @@ export function ApprovalLedgerMvp() {
             </label>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button onClick={() => addEntry()} className="rounded-full bg-[#d9a441] px-3 py-1.5 font-bold text-black">
+            <button
+              data-testid="gxeon-approval-ledger-add-entry"
+              onClick={() => addEntry()}
+              className="rounded-full bg-[#d9a441] px-3 py-1.5 font-bold text-black"
+            >
               Add Entry
             </button>
             {[

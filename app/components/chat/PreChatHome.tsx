@@ -10,6 +10,7 @@ import { IntegrationReadinessMvp } from '~/components/gxeon/IntegrationReadiness
 import { ApprovalLedgerMvp } from '~/components/gxeon/ApprovalLedgerMVP';
 import { BetaProductPipelineMvp } from '~/components/gxeon/BetaProductPipelineMVP';
 import { RevenueLedgerMvp } from '~/components/gxeon/RevenueLedgerMVP';
+import { AgentOperatingLayerMvp } from '~/components/gxeon/AgentOperatingLayerMVP';
 import type { Message } from 'ai';
 
 interface ProductFactoryMode {
@@ -36,6 +37,8 @@ const MACHINE_STATUS = [
   'Approval Ledger local-only',
   'Beta Product Pipeline local-only',
   'Revenue Ledger local-only',
+  'Agent-ready UI',
+  'Human-approved gates',
 ];
 
 const MODULES = [
@@ -50,6 +53,7 @@ const MODULES = [
   { title: 'CRM Inbox', subtitle: 'Leads e follow-up' },
   { title: 'Deploy Center', subtitle: 'GitHub, Railway e Vercel' },
   { title: 'Revenue Ledger', subtitle: 'Hipóteses, confirmações manuais e custos locais' },
+  { title: 'Agent Operating Layer', subtitle: 'Seletores, playbooks e logs locais para agentes futuros' },
 ];
 
 const FLOWS = [
@@ -76,6 +80,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-2 pb-6 sm:px-6" data-gxeon-pre-chat-actions>
       <section
+        data-testid="gxeon-product-factory-mode"
         className="mx-auto w-full max-w-chat rounded-2xl border border-[#d9a441]/20 bg-[#07080d]/90 p-3 shadow-[0_14px_44px_rgba(0,0,0,0.22)]"
         id="produto"
       >
@@ -102,6 +107,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
         <ApprovalLedgerMvp />
         <BetaProductPipelineMvp />
         <RevenueLedgerMvp />
+        <AgentOperatingLayerMvp />
         <div className="flex flex-wrap gap-2">
           {productFactoryModes.map((mode) => (
             <button
@@ -141,7 +147,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#d9a441]">Módulos</p>
             <h2 className="text-lg font-black text-white">Sistema compacto da forja</h2>
           </div>
-          <span className="text-[11px] text-white/45">11 módulos</span>
+          <span className="text-[11px] text-white/45">12 módulos</span>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {MODULES.map((module) => (

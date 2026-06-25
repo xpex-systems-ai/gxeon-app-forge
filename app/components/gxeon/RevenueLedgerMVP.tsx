@@ -133,7 +133,11 @@ export function RevenueLedgerMvp() {
   };
 
   return (
-    <section className="my-3 rounded-2xl border border-[#d9a441]/20 bg-[#05060a] p-3" id="revenue-ledger">
+    <section
+      data-testid="gxeon-revenue-ledger-container"
+      className="my-3 rounded-2xl border border-[#d9a441]/20 bg-[#05060a] p-3"
+      id="revenue-ledger"
+    >
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -285,7 +289,7 @@ export function RevenueLedgerMvp() {
             />
           </div>
           <div className="flex flex-wrap gap-2">
-            <button className={fieldClass} onClick={() => addEntry()}>
+            <button data-testid="gxeon-revenue-ledger-add-entry" className={fieldClass} onClick={() => addEntry()}>
               Add Entry
             </button>
             <button className={fieldClass} onClick={save}>

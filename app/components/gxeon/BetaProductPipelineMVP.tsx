@@ -74,7 +74,7 @@ export function BetaProductPipelineMvp() {
   const summary = useMemo(() => summarizeBetaPipelineItems(items), [items]);
   const updateForm = (patch: Partial<BetaProductPipelineItem>) =>
     setForm((cur) => normalizeBetaPipelineItem({ ...cur, ...patch, updatedAt: new Date().toISOString() }));
-  const addProduct = (item = form) => {
+  const addProduct = (item: Partial<BetaProductPipelineItem> = form) => {
     setItems((cur) => [createBetaPipelineItem(item), ...cur]);
     setForm(emptyForm());
     setStatus('Product added locally. Use Save Pipeline for browser localStorage persistence.');
@@ -149,7 +149,10 @@ export function BetaProductPipelineMvp() {
   };
 
   return (
-    <section className="my-3 rounded-2xl border border-[#d9a441]/25 bg-[#05060a] p-3 text-white">
+    <section
+      data-testid="gxeon-beta-pipeline-container"
+      className="my-3 rounded-2xl border border-[#d9a441]/25 bg-[#05060a] p-3 text-white"
+    >
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -278,6 +281,7 @@ export function BetaProductPipelineMvp() {
                 <button
                   key={label}
                   type="button"
+                  data-testid={label === 'Add Product' ? 'gxeon-beta-pipeline-add-item' : undefined}
                   onClick={
                     {
                       'Add Product': () => addProduct(),

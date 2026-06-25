@@ -148,7 +148,10 @@ export function IntegrationReadinessMvp({ setPrompt }: Props) {
   };
 
   return (
-    <section className="my-3 rounded-2xl border border-[#d9a441]/25 bg-black/40 p-3 text-xs text-bolt-elements-textSecondary">
+    <section
+      data-testid="gxeon-integration-readiness-container"
+      className="my-3 rounded-2xl border border-[#d9a441]/25 bg-black/40 p-3 text-xs text-bolt-elements-textSecondary"
+    >
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -320,6 +323,7 @@ export function IntegrationReadinessMvp({ setPrompt }: Props) {
               <button
                 key={l as string}
                 type="button"
+                data-testid={l === 'Gerar Integration Readiness' ? 'gxeon-integration-readiness-dry-run' : undefined}
                 onClick={fn as any}
                 className="rounded-lg border border-[#d9a441]/25 bg-[#d9a441]/10 px-3 py-1.5 text-[#d9a441]"
               >
