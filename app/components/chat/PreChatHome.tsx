@@ -11,6 +11,8 @@ import { ApprovalLedgerMvp } from '~/components/gxeon/ApprovalLedgerMVP';
 import { BetaProductPipelineMvp } from '~/components/gxeon/BetaProductPipelineMVP';
 import { RevenueLedgerMvp } from '~/components/gxeon/RevenueLedgerMVP';
 import { AgentOperatingLayerMvp } from '~/components/gxeon/AgentOperatingLayerMVP';
+import { OperatorWorkspaceShell } from '~/components/gxeon/OperatorWorkspaceShell';
+import type { OperatorWorkspaceModuleKey } from '~/lib/gxeon/operatorWorkspace';
 import type { Message } from 'ai';
 
 interface ProductFactoryMode {
@@ -37,7 +39,8 @@ const MACHINE_STATUS = [
   'Approval Ledger local-only',
   'Beta Product Pipeline local-only',
   'Revenue Ledger local-only',
-  'Agent-ready UI',
+  'Command Center tabs',
+  'Agent-ready gated',
   'Human-approved gates',
 ];
 
@@ -50,10 +53,9 @@ const MODULES = [
   { title: 'Integration Readiness', subtitle: 'Schemas, payloads e gates DRY_RUN_ONLY' },
   { title: 'Approval Ledger', subtitle: 'Aprovações, riscos e evidências locais' },
   { title: 'Beta Pipeline', subtitle: 'Estágios, prioridades e gates locais' },
-  { title: 'CRM Inbox', subtitle: 'Leads e follow-up' },
-  { title: 'Deploy Center', subtitle: 'GitHub, Railway e Vercel' },
   { title: 'Revenue Ledger', subtitle: 'Hipóteses, confirmações manuais e custos locais' },
   { title: 'Agent Operating Layer', subtitle: 'Seletores, playbooks e logs locais para agentes futuros' },
+  { title: 'Command Center Tabs', subtitle: 'Workspace por abas para navegação local' },
 ];
 
 const FLOWS = [
@@ -77,6 +79,34 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
       document.querySelector<HTMLTextAreaElement>('#composer textarea')?.focus();
     });
   };
+
+  const renderOperatorModule = (moduleKey: OperatorWorkspaceModuleKey) => {
+    switch (moduleKey) {
+      case 'ProductBuilderMVP':
+        return <ProductBuilderMvp setPrompt={applyProductFactoryMode} />;
+      case 'MarketplacePackGeneratorMVP':
+        return <MarketplacePackGeneratorMvp setPrompt={applyProductFactoryMode} />;
+      case 'CheckoutBlueprintMVP':
+        return <CheckoutBlueprintMvp setPrompt={applyProductFactoryMode} />;
+      case 'LandingBuilderMVP':
+        return <LandingBuilderMvp setPrompt={applyProductFactoryMode} />;
+      case 'ContentFactoryMVP':
+        return <ContentFactoryMvp setPrompt={applyProductFactoryMode} />;
+      case 'IntegrationReadinessMVP':
+        return <IntegrationReadinessMvp setPrompt={applyProductFactoryMode} />;
+      case 'ApprovalLedgerMVP':
+        return <ApprovalLedgerMvp />;
+      case 'BetaProductPipelineMVP':
+        return <BetaProductPipelineMvp />;
+      case 'RevenueLedgerMVP':
+        return <RevenueLedgerMvp />;
+      case 'AgentOperatingLayerMVP':
+        return <AgentOperatingLayerMvp />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-2 pb-6 sm:px-6" data-gxeon-pre-chat-actions>
       <section
@@ -98,27 +128,23 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
             Manual
           </span>
         </div>
-        <ProductBuilderMvp setPrompt={applyProductFactoryMode} />
-        <MarketplacePackGeneratorMvp setPrompt={applyProductFactoryMode} />
-        <CheckoutBlueprintMvp setPrompt={applyProductFactoryMode} />
-        <LandingBuilderMvp setPrompt={applyProductFactoryMode} />
-        <ContentFactoryMvp setPrompt={applyProductFactoryMode} />
-        <IntegrationReadinessMvp setPrompt={applyProductFactoryMode} />
-        <ApprovalLedgerMvp />
-        <BetaProductPipelineMvp />
-        <RevenueLedgerMvp />
-        <AgentOperatingLayerMvp />
-        <div className="flex flex-wrap gap-2">
-          {productFactoryModes.map((mode) => (
-            <button
-              key={mode.label}
-              type="button"
-              onClick={() => applyProductFactoryMode(mode.prompt)}
-              className="rounded-full border border-[#d9a441]/18 bg-black/30 px-3 py-1.5 text-xs text-bolt-elements-textSecondary transition-theme hover:border-[#d9a441]/45 hover:bg-[#d9a441]/10 hover:text-bolt-elements-textPrimary"
-            >
-              {mode.label}
-            </button>
-          ))}
+        <OperatorWorkspaceShell renderModule={renderOperatorModule} />
+        <div className="mt-3 rounded-xl border border-white/10 bg-black/25 p-2">
+          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#d9a441]">
+            Legacy prompt presets
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {productFactoryModes.map((mode) => (
+              <button
+                key={mode.label}
+                type="button"
+                onClick={() => applyProductFactoryMode(mode.prompt)}
+                className="rounded-full border border-[#d9a441]/18 bg-black/30 px-3 py-1.5 text-xs text-bolt-elements-textSecondary transition-theme hover:border-[#d9a441]/45 hover:bg-[#d9a441]/10 hover:text-bolt-elements-textPrimary"
+              >
+                {mode.label}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -147,7 +173,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#d9a441]">Módulos</p>
             <h2 className="text-lg font-black text-white">Sistema compacto da forja</h2>
           </div>
-          <span className="text-[11px] text-white/45">12 módulos</span>
+          <span className="text-[11px] text-white/45">11 módulos + 6 abas</span>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {MODULES.map((module) => (
