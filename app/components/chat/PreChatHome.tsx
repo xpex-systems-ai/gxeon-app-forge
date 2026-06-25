@@ -2,6 +2,7 @@ import React from 'react';
 import { ImportButtons } from '~/components/chat/chatExportAndImport/ImportButtons';
 import GitCloneButton from './GitCloneButton';
 import { ProductBuilderMvp } from '~/components/gxeon/ProductBuilderMVP';
+import { ProductCatalogMvp } from '~/components/gxeon/ProductCatalogMVP';
 import { MarketplacePackGeneratorMvp } from '~/components/gxeon/MarketplacePackGeneratorMVP';
 import { CheckoutBlueprintMvp } from '~/components/gxeon/CheckoutBlueprintMVP';
 import { LandingBuilderMvp } from '~/components/gxeon/LandingBuilderMVP';
@@ -40,6 +41,7 @@ const MACHINE_STATUS = [
   'Approval Ledger local-only',
   'Beta Product Pipeline local-only',
   'Revenue Ledger local-only',
+  'Product Catalog local-only',
   'Command Center tabs',
   'Agent-ready gated',
   'Human-approved gates',
@@ -47,6 +49,7 @@ const MACHINE_STATUS = [
 
 const MODULES = [
   { title: 'Product Builder', subtitle: 'Oferta, avatar e estrutura' },
+  { title: 'Product Catalog', subtitle: 'Produtos e assets locais' },
   { title: 'Landing Builder', subtitle: 'Páginas de venda e captura' },
   { title: 'Marketplace Pack Generator', subtitle: 'Packs comerciais sem APIs reais' },
   { title: 'Checkout Blueprint', subtitle: 'Preço, plano e pós-compra manual' },
@@ -86,6 +89,8 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
     switch (moduleKey) {
       case 'ProductBuilderMVP':
         return <ProductBuilderMvp setPrompt={applyProductFactoryMode} />;
+      case 'ProductCatalogMVP':
+        return <ProductCatalogMvp />;
       case 'MarketplacePackGeneratorMVP':
         return <MarketplacePackGeneratorMvp setPrompt={applyProductFactoryMode} />;
       case 'CheckoutBlueprintMVP':
