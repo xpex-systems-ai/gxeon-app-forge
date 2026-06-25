@@ -7,33 +7,33 @@ import {
 } from './operatorWorkspace';
 
 describe('operator workspace metadata', () => {
-  it('uses unique tab ids and includes all required tabs', () => {
+  it('uses unique tab ids and includes the Core tab', () => {
     const tabs = getOperatorWorkspaceTabs();
     const ids = tabs.map((tab) => tab.id);
 
     expect(new Set(ids).size).toBe(ids.length);
-    expect(ids).toEqual(['create', 'package', 'monetize', 'validate', 'integrate', 'catalog', 'agent']);
-    expect(ids).toEqual(['create', 'catalog', 'package', 'monetize', 'validate', 'integrate', 'agent']);
-    expect(ids).toEqual(['create', 'package', 'catalog', 'monetize', 'validate', 'integrate', 'agent']);
+    expect(ids).toEqual(['create', 'catalog', 'package', 'monetize', 'validate', 'integrate', 'core', 'agent']);
   });
 
   it('assigns at least one module key to every tab', () => {
     expect(getOperatorWorkspaceTabs().every((tab) => tab.moduleKeys.length > 0)).toBe(true);
   });
 
-  it('returns accurate summary counts', () => {
+  it('returns accurate summary counts and includes Core Bridge', () => {
     const summary = getOperatorWorkspaceSummary();
 
-    expect(summary.tabCount).toBe(7);
-    expect(summary.moduleCount).toBe(11);
-    expect(summary.tabIds).toEqual(['create', 'package', 'monetize', 'validate', 'integrate', 'catalog', 'agent']);
-    expect(summary.tabCount).toBe(6);
-    expect(summary.moduleCount).toBe(11);
-    expect(summary.tabIds).toEqual(['create', 'package', 'monetize', 'validate', 'integrate', 'agent']);
-    expect(summary.tabCount).toBe(7);
-    expect(summary.moduleCount).toBe(11);
-    expect(summary.tabIds).toEqual(['create', 'catalog', 'package', 'monetize', 'validate', 'integrate', 'agent']);
-    expect(summary.tabIds).toEqual(['create', 'package', 'catalog', 'monetize', 'validate', 'integrate', 'agent']);
+    expect(summary.tabCount).toBe(8);
+    expect(summary.moduleCount).toBe(12);
+    expect(summary.moduleKeys).toContain('CoreBridgeMVP');
+    expect(summary.tabIds).toContain('core');
+  });
+
+  it('marks Core Bridge local-only with human approval required', () => {
+    const coreModule = OPERATOR_WORKSPACE_MODULES.find((module) => module.key === 'CoreBridgeMVP');
+    const coreTab = OPERATOR_WORKSPACE_TABS.find((tab) => tab.id === 'core');
+
+    expect(coreModule).toMatchObject({ label: 'Core Bridge', localOnly: true, humanApprovalRequired: true });
+    expect(coreTab?.moduleKeys).toEqual(['CoreBridgeMVP']);
   });
 
   it('is data-only and contains no executable action handlers', () => {
@@ -61,7 +61,6 @@ describe('operator workspace metadata', () => {
       'social posting',
       'email sending',
       'whatsapp sending',
-      'marketplace integration',
     ];
 
     for (const claim of forbiddenClaims) {

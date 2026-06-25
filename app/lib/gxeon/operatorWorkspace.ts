@@ -1,6 +1,12 @@
-export type OperatorWorkspaceTabId = 'create' | 'package' | 'monetize' | 'validate' | 'integrate' | 'agent' | 'catalog';
-export type OperatorWorkspaceTabId = 'create' | 'catalog' | 'package' | 'monetize' | 'validate' | 'integrate' | 'agent';
-export type OperatorWorkspaceTabId = 'create' | 'package' | 'catalog' | 'monetize' | 'validate' | 'integrate' | 'agent';
+export type OperatorWorkspaceTabId =
+  | 'create'
+  | 'catalog'
+  | 'package'
+  | 'monetize'
+  | 'validate'
+  | 'integrate'
+  | 'core'
+  | 'agent';
 
 export type OperatorWorkspaceModuleKey =
   | 'ProductBuilderMVP'
@@ -14,9 +20,7 @@ export type OperatorWorkspaceModuleKey =
   | 'BetaProductPipelineMVP'
   | 'RevenueLedgerMVP'
   | 'AgentOperatingLayerMVP'
-  | 'ProductCatalogMVP';
-  | 'ProductCatalogMVP'
-  | 'AgentOperatingLayerMVP';
+  | 'CoreBridgeMVP';
 
 export interface OperatorWorkspaceModuleDefinition {
   key: OperatorWorkspaceModuleKey;
@@ -52,7 +56,6 @@ export const OPERATOR_WORKSPACE_MODULES: readonly OperatorWorkspaceModuleDefinit
   {
     key: 'ProductCatalogMVP',
     label: 'Product Catalog',
-    description: 'Catálogo local de produtos e assets com IDs gerados apenas ao adicionar.',
     description: 'Catálogo local de produtos e biblioteca de assets com export manual.',
     localOnly: true,
     humanApprovalRequired: true,
@@ -114,9 +117,9 @@ export const OPERATOR_WORKSPACE_MODULES: readonly OperatorWorkspaceModuleDefinit
     humanApprovalRequired: true,
   },
   {
-    key: 'ProductCatalogMVP',
-    label: 'Product Catalog',
-    description: 'Catálogo consolidado local com imports explícitos e revisão humana.',
+    key: 'CoreBridgeMVP',
+    label: 'Core Bridge',
+    description: 'Contratos locais Core-to-Forge e Forge-to-Core com dados mockados.',
     localOnly: true,
     humanApprovalRequired: true,
   },
@@ -127,13 +130,6 @@ export const OPERATOR_WORKSPACE_MODULES: readonly OperatorWorkspaceModuleDefinit
     localOnly: true,
     humanApprovalRequired: true,
   },
-  {
-    key: 'ProductCatalogMVP',
-    label: 'Product Catalog',
-    description: 'Biblioteca local de produtos, ofertas, assets, status e próximos passos.',
-    localOnly: true,
-    humanApprovalRequired: true,
-  },
 ] as const;
 
 export const OPERATOR_WORKSPACE_TABS: readonly OperatorWorkspaceTabDefinition[] = [
@@ -141,7 +137,7 @@ export const OPERATOR_WORKSPACE_TABS: readonly OperatorWorkspaceTabDefinition[] 
     id: 'create',
     label: 'Criar',
     description: 'Transforme ideias brutas em blueprints de produto.',
-    moduleKeys: ['ProductBuilderMVP', 'ProductCatalogMVP'],
+    moduleKeys: ['ProductBuilderMVP'],
     safetyNote: 'Navegação local; nenhuma geração automática ou envio ao Composer.',
   },
   {
@@ -149,7 +145,7 @@ export const OPERATOR_WORKSPACE_TABS: readonly OperatorWorkspaceTabDefinition[] 
     label: 'Catálogo',
     description: 'Organize produtos e assets locais antes de embalar ou validar.',
     moduleKeys: ['ProductCatalogMVP'],
-    safetyNote: 'Catálogo local-only; IDs são gerados somente ao adicionar/importar e nada é publicado.',
+    safetyNote: 'Catálogo local-only; nada é publicado.',
   },
   {
     id: 'package',
@@ -157,13 +153,6 @@ export const OPERATOR_WORKSPACE_TABS: readonly OperatorWorkspaceTabDefinition[] 
     description: 'Prepare marketplace, landing e campanha sem integrações externas.',
     moduleKeys: ['MarketplacePackGeneratorMVP', 'LandingBuilderMVP', 'ContentFactoryMVP'],
     safetyNote: 'Assets são preparados localmente; publicação e envio seguem manuais.',
-  },
-  {
-    id: 'catalog',
-    label: 'Catálogo',
-    description: 'Consolide produtos e assets locais antes de distribuição manual.',
-    moduleKeys: ['ProductCatalogMVP'],
-    safetyNote: 'Importações leem localStorage somente após clique e exigem revisão humana.',
   },
   {
     id: 'monetize',
@@ -184,14 +173,14 @@ export const OPERATOR_WORKSPACE_TABS: readonly OperatorWorkspaceTabDefinition[] 
     label: 'Integrar',
     description: 'Prepare blueprints seguros de integração em DRY_RUN_ONLY.',
     moduleKeys: ['IntegrationReadinessMVP'],
-    safetyNote: 'Sem webhooks, execuções n8n conectadas, OAuth, credenciais ou chamadas de API.',
+    safetyNote: 'Sem webhooks, OAuth, credenciais ou chamadas de API.',
   },
   {
-    id: 'catalog',
-    label: 'Catálogo',
-    description: 'Biblioteca local de produtos e assets.',
-    moduleKeys: ['ProductCatalogMVP'],
-    safetyNote: 'Catalogação local antes de distribuição; sem uploads, sync, publicação ou checkout.',
+    id: 'core',
+    label: 'Core',
+    description: 'Prepare contratos locais para futura ponte GXEON Core/GX1.',
+    moduleKeys: ['CoreBridgeMVP'],
+    safetyNote: 'Mock/local-only; nenhuma chamada ao Core, GitHub, Railway, Vercel, Hotmart ou webhooks.',
   },
   {
     id: 'agent',
@@ -214,10 +203,5 @@ export function getOperatorWorkspaceSummary(): OperatorWorkspaceSummary {
   const tabs = getOperatorWorkspaceTabs();
   const moduleKeys = Array.from(new Set(tabs.flatMap((tab) => tab.moduleKeys)));
 
-  return {
-    tabCount: tabs.length,
-    moduleCount: moduleKeys.length,
-    tabIds: tabs.map((tab) => tab.id),
-    moduleKeys,
-  };
+  return { tabCount: tabs.length, moduleCount: moduleKeys.length, tabIds: tabs.map((tab) => tab.id), moduleKeys };
 }

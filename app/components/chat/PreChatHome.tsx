@@ -11,11 +11,9 @@ import { IntegrationReadinessMvp } from '~/components/gxeon/IntegrationReadiness
 import { ApprovalLedgerMvp } from '~/components/gxeon/ApprovalLedgerMVP';
 import { BetaProductPipelineMvp } from '~/components/gxeon/BetaProductPipelineMVP';
 import { RevenueLedgerMvp } from '~/components/gxeon/RevenueLedgerMVP';
-import { ProductCatalogMvp } from '~/components/gxeon/ProductCatalogMVP';
 import { AgentOperatingLayerMvp } from '~/components/gxeon/AgentOperatingLayerMVP';
-import { ProductCatalogMvp } from '~/components/gxeon/ProductCatalogMVP';
+import { CoreBridgeMvp } from '~/components/gxeon/CoreBridgeMVP';
 import { OperatorWorkspaceShell } from '~/components/gxeon/OperatorWorkspaceShell';
-import { ProductCatalogMvp } from '~/components/gxeon/ProductCatalogMVP';
 import type { OperatorWorkspaceModuleKey } from '~/lib/gxeon/operatorWorkspace';
 import type { Message } from 'ai';
 
@@ -47,13 +45,13 @@ const MACHINE_STATUS = [
   'Command Center tabs',
   'Product Catalog local-only',
   'Agent-ready gated',
+  'Core Bridge local-only',
   'Human-approved gates',
 ];
 
 const MODULES = [
   { title: 'Product Builder', subtitle: 'Oferta, avatar e estrutura' },
   { title: 'Product Catalog', subtitle: 'Catálogo local de produtos e assets' },
-  { title: 'Product Catalog', subtitle: 'Produtos e assets locais' },
   { title: 'Landing Builder', subtitle: 'Páginas de venda e captura' },
   { title: 'Marketplace Pack Generator', subtitle: 'Packs comerciais sem APIs reais' },
   { title: 'Checkout Blueprint', subtitle: 'Preço, plano e pós-compra manual' },
@@ -62,10 +60,8 @@ const MODULES = [
   { title: 'Approval Ledger', subtitle: 'Aprovações, riscos e evidências locais' },
   { title: 'Beta Pipeline', subtitle: 'Estágios, prioridades e gates locais' },
   { title: 'Revenue Ledger', subtitle: 'Hipóteses, confirmações manuais e custos locais' },
-  { title: 'Product Catalog', subtitle: 'Catálogo local consolidado com imports explícitos' },
   { title: 'Agent Operating Layer', subtitle: 'Seletores, playbooks e logs locais para agentes futuros' },
-  { title: 'Command Center Tabs', subtitle: 'Workspace por abas para navegação local' },
-  { title: 'Product Catalog', subtitle: 'Biblioteca local de produtos e assets' },
+  { title: 'Core Bridge', subtitle: 'Contratos locais Core-to-Forge e Forge-to-Core' },
 ];
 
 const FLOWS = [
@@ -112,10 +108,10 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
         return <BetaProductPipelineMvp />;
       case 'RevenueLedgerMVP':
         return <RevenueLedgerMvp />;
-      case 'ProductCatalogMVP':
-        return <ProductCatalogMvp />;
       case 'AgentOperatingLayerMVP':
         return <AgentOperatingLayerMvp />;
+      case 'CoreBridgeMVP':
+        return <CoreBridgeMvp />;
       default:
         return null;
     }
@@ -187,8 +183,7 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#d9a441]">Módulos</p>
             <h2 className="text-lg font-black text-white">Sistema compacto da forja</h2>
           </div>
-          <span className="text-[11px] text-white/45">11 módulos + 7 abas</span>
-          <span className="text-[11px] text-white/45">12 módulos + 7 abas</span>
+          <span className="text-[11px] text-white/45">12 módulos + 8 abas</span>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {MODULES.map((module) => (
