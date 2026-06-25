@@ -49,6 +49,7 @@ export const OPERATOR_WORKSPACE_MODULES: readonly OperatorWorkspaceModuleDefinit
   {
     key: 'ProductCatalogMVP',
     label: 'Product Catalog',
+    description: 'Catálogo local de produtos e assets com IDs gerados apenas ao adicionar.',
     description: 'Catálogo local de produtos e biblioteca de assets com export manual.',
     localOnly: true,
     humanApprovalRequired: true,
@@ -130,7 +131,7 @@ export const OPERATOR_WORKSPACE_TABS: readonly OperatorWorkspaceTabDefinition[] 
     id: 'create',
     label: 'Criar',
     description: 'Transforme ideias brutas em blueprints de produto.',
-    moduleKeys: ['ProductBuilderMVP'],
+    moduleKeys: ['ProductBuilderMVP', 'ProductCatalogMVP'],
     safetyNote: 'Navegação local; nenhuma geração automática ou envio ao Composer.',
   },
   {
