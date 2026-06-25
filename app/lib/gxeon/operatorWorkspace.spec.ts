@@ -23,7 +23,7 @@ describe('operator workspace metadata', () => {
     const summary = getOperatorWorkspaceSummary();
 
     expect(summary.tabCount).toBe(6);
-    expect(summary.moduleCount).toBe(10);
+    expect(summary.moduleCount).toBe(11);
     expect(summary.tabIds).toEqual(['create', 'package', 'monetize', 'validate', 'integrate', 'agent']);
   });
 

@@ -2,6 +2,7 @@ export type OperatorWorkspaceTabId = 'create' | 'package' | 'monetize' | 'valida
 
 export type OperatorWorkspaceModuleKey =
   | 'ProductBuilderMVP'
+  | 'ProductCatalogMVP'
   | 'MarketplacePackGeneratorMVP'
   | 'CheckoutBlueprintMVP'
   | 'LandingBuilderMVP'
@@ -40,6 +41,13 @@ export const OPERATOR_WORKSPACE_MODULES: readonly OperatorWorkspaceModuleDefinit
     key: 'ProductBuilderMVP',
     label: 'Product Builder',
     description: 'Oferta, avatar, promessa, entregáveis e checklist de aprovação.',
+    localOnly: true,
+    humanApprovalRequired: true,
+  },
+  {
+    key: 'ProductCatalogMVP',
+    label: 'Product Catalog',
+    description: 'Catálogo local de produtos e assets com IDs gerados apenas ao adicionar.',
     localOnly: true,
     humanApprovalRequired: true,
   },
@@ -113,7 +121,7 @@ export const OPERATOR_WORKSPACE_TABS: readonly OperatorWorkspaceTabDefinition[] 
     id: 'create',
     label: 'Criar',
     description: 'Transforme ideias brutas em blueprints de produto.',
-    moduleKeys: ['ProductBuilderMVP'],
+    moduleKeys: ['ProductBuilderMVP', 'ProductCatalogMVP'],
     safetyNote: 'Navegação local; nenhuma geração automática ou envio ao Composer.',
   },
   {

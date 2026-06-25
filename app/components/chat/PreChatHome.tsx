@@ -12,6 +12,7 @@ import { BetaProductPipelineMvp } from '~/components/gxeon/BetaProductPipelineMV
 import { RevenueLedgerMvp } from '~/components/gxeon/RevenueLedgerMVP';
 import { AgentOperatingLayerMvp } from '~/components/gxeon/AgentOperatingLayerMVP';
 import { OperatorWorkspaceShell } from '~/components/gxeon/OperatorWorkspaceShell';
+import { ProductCatalogMvp } from '~/components/gxeon/ProductCatalogMVP';
 import type { OperatorWorkspaceModuleKey } from '~/lib/gxeon/operatorWorkspace';
 import type { Message } from 'ai';
 
@@ -46,6 +47,7 @@ const MACHINE_STATUS = [
 
 const MODULES = [
   { title: 'Product Builder', subtitle: 'Oferta, avatar e estrutura' },
+  { title: 'Product Catalog', subtitle: 'Catálogo local de produtos e assets' },
   { title: 'Landing Builder', subtitle: 'Páginas de venda e captura' },
   { title: 'Marketplace Pack Generator', subtitle: 'Packs comerciais sem APIs reais' },
   { title: 'Checkout Blueprint', subtitle: 'Preço, plano e pós-compra manual' },
@@ -84,6 +86,8 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
     switch (moduleKey) {
       case 'ProductBuilderMVP':
         return <ProductBuilderMvp setPrompt={applyProductFactoryMode} />;
+      case 'ProductCatalogMVP':
+        return <ProductCatalogMvp />;
       case 'MarketplacePackGeneratorMVP':
         return <MarketplacePackGeneratorMvp setPrompt={applyProductFactoryMode} />;
       case 'CheckoutBlueprintMVP':
