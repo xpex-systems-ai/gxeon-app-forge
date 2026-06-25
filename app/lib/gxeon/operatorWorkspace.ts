@@ -1,4 +1,4 @@
-export type OperatorWorkspaceTabId = 'create' | 'package' | 'monetize' | 'validate' | 'integrate' | 'agent';
+export type OperatorWorkspaceTabId = 'create' | 'package' | 'monetize' | 'validate' | 'integrate' | 'agent' | 'catalog';
 
 export type OperatorWorkspaceModuleKey =
   | 'ProductBuilderMVP'
@@ -10,7 +10,8 @@ export type OperatorWorkspaceModuleKey =
   | 'ApprovalLedgerMVP'
   | 'BetaProductPipelineMVP'
   | 'RevenueLedgerMVP'
-  | 'AgentOperatingLayerMVP';
+  | 'AgentOperatingLayerMVP'
+  | 'ProductCatalogMVP';
 
 export interface OperatorWorkspaceModuleDefinition {
   key: OperatorWorkspaceModuleKey;
@@ -106,6 +107,13 @@ export const OPERATOR_WORKSPACE_MODULES: readonly OperatorWorkspaceModuleDefinit
     localOnly: true,
     humanApprovalRequired: true,
   },
+  {
+    key: 'ProductCatalogMVP',
+    label: 'Product Catalog',
+    description: 'Biblioteca local de produtos, ofertas, assets, status e próximos passos.',
+    localOnly: true,
+    humanApprovalRequired: true,
+  },
 ] as const;
 
 export const OPERATOR_WORKSPACE_TABS: readonly OperatorWorkspaceTabDefinition[] = [
@@ -143,6 +151,13 @@ export const OPERATOR_WORKSPACE_TABS: readonly OperatorWorkspaceTabDefinition[] 
     description: 'Prepare blueprints seguros de integração em DRY_RUN_ONLY.',
     moduleKeys: ['IntegrationReadinessMVP'],
     safetyNote: 'Sem webhooks, execuções n8n conectadas, OAuth, credenciais ou chamadas de API.',
+  },
+  {
+    id: 'catalog',
+    label: 'Catálogo',
+    description: 'Biblioteca local de produtos e assets.',
+    moduleKeys: ['ProductCatalogMVP'],
+    safetyNote: 'Catalogação local antes de distribuição; sem uploads, sync, publicação ou checkout.',
   },
   {
     id: 'agent',
