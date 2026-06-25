@@ -12,7 +12,8 @@ describe('operator workspace metadata', () => {
     const ids = tabs.map((tab) => tab.id);
 
     expect(new Set(ids).size).toBe(ids.length);
-    expect(ids).toEqual(['create', 'package', 'monetize', 'validate', 'integrate', 'agent']);
+    expect(ids).toEqual(['create', 'catalog', 'package', 'monetize', 'validate', 'integrate', 'agent']);
+    expect(ids).toEqual(['create', 'package', 'catalog', 'monetize', 'validate', 'integrate', 'agent']);
   });
 
   it('assigns at least one module key to every tab', () => {
@@ -25,6 +26,10 @@ describe('operator workspace metadata', () => {
     expect(summary.tabCount).toBe(6);
     expect(summary.moduleCount).toBe(11);
     expect(summary.tabIds).toEqual(['create', 'package', 'monetize', 'validate', 'integrate', 'agent']);
+    expect(summary.tabCount).toBe(7);
+    expect(summary.moduleCount).toBe(11);
+    expect(summary.tabIds).toEqual(['create', 'catalog', 'package', 'monetize', 'validate', 'integrate', 'agent']);
+    expect(summary.tabIds).toEqual(['create', 'package', 'catalog', 'monetize', 'validate', 'integrate', 'agent']);
   });
 
   it('is data-only and contains no executable action handlers', () => {

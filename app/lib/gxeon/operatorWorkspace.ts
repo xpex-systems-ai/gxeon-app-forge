@@ -1,4 +1,5 @@
-export type OperatorWorkspaceTabId = 'create' | 'package' | 'monetize' | 'validate' | 'integrate' | 'agent';
+export type OperatorWorkspaceTabId = 'create' | 'catalog' | 'package' | 'monetize' | 'validate' | 'integrate' | 'agent';
+export type OperatorWorkspaceTabId = 'create' | 'package' | 'catalog' | 'monetize' | 'validate' | 'integrate' | 'agent';
 
 export type OperatorWorkspaceModuleKey =
   | 'ProductBuilderMVP'
@@ -11,6 +12,7 @@ export type OperatorWorkspaceModuleKey =
   | 'ApprovalLedgerMVP'
   | 'BetaProductPipelineMVP'
   | 'RevenueLedgerMVP'
+  | 'ProductCatalogMVP'
   | 'AgentOperatingLayerMVP';
 
 export interface OperatorWorkspaceModuleDefinition {
@@ -48,6 +50,7 @@ export const OPERATOR_WORKSPACE_MODULES: readonly OperatorWorkspaceModuleDefinit
     key: 'ProductCatalogMVP',
     label: 'Product Catalog',
     description: 'Catálogo local de produtos e assets com IDs gerados apenas ao adicionar.',
+    description: 'Catálogo local de produtos e biblioteca de assets com export manual.',
     localOnly: true,
     humanApprovalRequired: true,
   },
@@ -108,6 +111,13 @@ export const OPERATOR_WORKSPACE_MODULES: readonly OperatorWorkspaceModuleDefinit
     humanApprovalRequired: true,
   },
   {
+    key: 'ProductCatalogMVP',
+    label: 'Product Catalog',
+    description: 'Catálogo consolidado local com imports explícitos e revisão humana.',
+    localOnly: true,
+    humanApprovalRequired: true,
+  },
+  {
     key: 'AgentOperatingLayerMVP',
     label: 'Agent Operating Layer',
     description: 'Seletores, command map, playbooks, blocked actions e logs locais.',
@@ -125,11 +135,25 @@ export const OPERATOR_WORKSPACE_TABS: readonly OperatorWorkspaceTabDefinition[] 
     safetyNote: 'Navegação local; nenhuma geração automática ou envio ao Composer.',
   },
   {
+    id: 'catalog',
+    label: 'Catálogo',
+    description: 'Organize produtos e assets locais antes de embalar ou validar.',
+    moduleKeys: ['ProductCatalogMVP'],
+    safetyNote: 'Catálogo local-only; IDs são gerados somente ao adicionar/importar e nada é publicado.',
+  },
+  {
     id: 'package',
     label: 'Embalar',
     description: 'Prepare marketplace, landing e campanha sem integrações externas.',
     moduleKeys: ['MarketplacePackGeneratorMVP', 'LandingBuilderMVP', 'ContentFactoryMVP'],
     safetyNote: 'Assets são preparados localmente; publicação e envio seguem manuais.',
+  },
+  {
+    id: 'catalog',
+    label: 'Catálogo',
+    description: 'Consolide produtos e assets locais antes de distribuição manual.',
+    moduleKeys: ['ProductCatalogMVP'],
+    safetyNote: 'Importações leem localStorage somente após clique e exigem revisão humana.',
   },
   {
     id: 'monetize',

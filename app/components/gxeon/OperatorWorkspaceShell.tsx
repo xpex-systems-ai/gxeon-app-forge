@@ -13,7 +13,9 @@ interface OperatorWorkspaceShellProps {
 
 const QUICK_ACTIONS: { label: string; tabId: OperatorWorkspaceTabId; testId: string }[] = [
   { label: 'Criar Produto', tabId: 'create', testId: 'gxeon-operator-quick-create-product' },
+  { label: 'Catálogo', tabId: 'catalog', testId: 'gxeon-operator-quick-catalog' },
   { label: 'Embalar Oferta', tabId: 'package', testId: 'gxeon-operator-quick-package-offer' },
+  { label: 'Catálogo', tabId: 'catalog', testId: 'gxeon-operator-quick-catalog' },
   { label: 'Preparar Checkout', tabId: 'monetize', testId: 'gxeon-operator-quick-prepare-checkout' },
   { label: 'Criar Landing', tabId: 'package', testId: 'gxeon-operator-quick-create-landing' },
   { label: 'Criar Conteúdo', tabId: 'package', testId: 'gxeon-operator-quick-create-content' },
