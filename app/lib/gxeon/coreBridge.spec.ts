@@ -12,7 +12,9 @@ import {
 
 describe('core bridge local-only contracts', () => {
   it('normalizes Core-to-Forge opportunity payloads with safe constants', () => {
-    const normalized = normalizeCoreOpportunityPayload({ repo: { name: 'scanner-result', stars: '42' as never } });
+    const normalized = normalizeCoreOpportunityPayload({
+      repo: { name: 'scanner-result', stars: '42' as never },
+    } as never);
 
     expect(normalized.source).toBe('gxeon-core');
     expect(normalized.type).toBe('repo_product_opportunity');
@@ -28,23 +30,43 @@ describe('core bridge local-only contracts', () => {
 
   it('normalizes Forge-to-Core readiness as dry-run only and not approved by default', () => {
     const normalized = normalizeForgeProductReadyPayload({
-      integrationRequest: { mode: 'dry_run', needsWebhook: true, needsProductMapping: true },
+      integrationRequest: { mode: 'dry_run', needsWebhook: true, needsProductMapping: true } as never,
       approval: { humanApproved: true, nextAction: 'review' },
     });
 
     expect(normalized.source).toBe('gxeon-app-forge');
     expect(normalized.integrationRequest.mode).toBe('dry_run');
+    expect(normalized.integrationRequest.needsWebhook).toBe(true);
+    expect(normalized.integrationRequest.needsProductMapping).toBe(true);
     expect(normalized.approval.humanApproved).toBe(false);
   });
 
-  it('strips secret-like fields recursively', () => {
+  it('preserves boolean contract anchors while forcing safety gates', () => {
+    const withoutMapping = normalizeForgeProductReadyPayload({
+      integrationRequest: { mode: 'dry_run', needsWebhook: true, needsProductMapping: false } as never,
+      approval: { humanApproved: true, nextAction: 'review' },
+    });
+    const withMapping = normalizeForgeProductReadyPayload({
+      integrationRequest: { mode: 'dry_run', needsWebhook: true, needsProductMapping: true } as never,
+    });
+
+    expect(withoutMapping.integrationRequest.needsWebhook).toBe(true);
+    expect(withoutMapping.integrationRequest.needsProductMapping).toBe(false);
+    expect(withoutMapping.approval.humanApproved).toBe(false);
+    expect(withMapping.integrationRequest.needsProductMapping).toBe(true);
+  });
+
+  it('strips secret-like fields recursively without removing boolean contract anchors', () => {
     const stripped = stripSecretLikeCoreBridgeFields({
       password: 'x',
       webhookUrl: 'https://hooks.example.test',
-      nested: { apiKey: 'hidden', safe: 'kept' },
+      webhookSecret: 'hidden',
+      webhookToken: 'hidden',
+      needsWebhook: true,
+      nested: { apiKey: 'hidden', safe: 'kept', needsProductMapping: false },
     });
 
-    expect(stripped).toEqual({ nested: { safe: 'kept' } });
+    expect(stripped).toEqual({ needsWebhook: true, nested: { safe: 'kept', needsProductMapping: false } });
   });
 
   it('exposes all required safety flags', () => {
@@ -72,7 +94,9 @@ describe('core bridge local-only contracts', () => {
   });
 
   it('treats external URLs as inert repo references, not active calls', () => {
-    const normalized = normalizeCoreOpportunityPayload({ repo: { url: 'https://github.com/example/project' } });
+    const normalized = normalizeCoreOpportunityPayload({
+      repo: { url: 'https://github.com/example/project' },
+    } as never);
     const markdown = buildCoreBridgeMarkdown(normalized, MOCK_FORGE_PRODUCT_READY_PAYLOAD);
 
     expect(normalized.repo.url).toBe('https://github.com/example/project');
@@ -88,7 +112,7 @@ describe('core bridge local-only contracts', () => {
         url: 'https://github.com/example/project',
         license: 'MIT',
         stars: 12000,
-      },
+      } as never,
       technical: {
         stack: ['React', 'Node'],
         deployTargets: ['Railway', 'Vercel'],

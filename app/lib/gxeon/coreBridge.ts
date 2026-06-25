@@ -88,7 +88,27 @@ export const CORE_BRIDGE_SAFETY_FLAGS: CoreBridgeSafetyFlags = {
   humanApprovalRequired: true,
 };
 
-const SECRET_LIKE_KEYS = ['token', 'secret', 'password', 'apiKey', 'apikey', 'authorization', 'webhook', 'checkoutUrl'];
+const SECRET_LIKE_KEYS = [
+  'token',
+  'secret',
+  'password',
+  'apiKey',
+  'apikey',
+  'authorization',
+  'checkoutUrl',
+  'webhookUrl',
+  'webhookSecret',
+  'webhookToken',
+];
+const BOOLEAN_CONTRACT_KEYS = [
+  'needsWebhook',
+  'needsProductMapping',
+  'licenseReviewRequired',
+  'humanApprovalRequired',
+  'noAutoFork',
+  'noAutoDeploy',
+  'noAutoPublish',
+];
 const asText = (value: unknown, fallback = '') => (typeof value === 'string' && value.trim() ? value.trim() : fallback);
 const asBool = (value: unknown, fallback: boolean) => (typeof value === 'boolean' ? value : fallback);
 const asNumber = (value: unknown, fallback = 0) => (Number.isFinite(Number(value)) ? Number(value) : fallback);
@@ -149,6 +169,16 @@ export const MOCK_FORGE_PRODUCT_READY_PAYLOAD: ForgeProductReadyPayload = {
   },
 };
 
+function isSensitiveCoreBridgeKey(key: string) {
+  if (BOOLEAN_CONTRACT_KEYS.includes(key)) {
+    return false;
+  }
+
+  const normalizedKey = key.toLowerCase();
+
+  return SECRET_LIKE_KEYS.some((secretKey) => normalizedKey === secretKey.toLowerCase());
+}
+
 export function stripSecretLikeCoreBridgeFields<T>(input: T): T {
   if (Array.isArray(input)) {
     return input.map((item) => stripSecretLikeCoreBridgeFields(item)) as T;
@@ -160,17 +190,17 @@ export function stripSecretLikeCoreBridgeFields<T>(input: T): T {
 
   return Object.fromEntries(
     Object.entries(input as Record<string, unknown>)
-      .filter(([key]) => !SECRET_LIKE_KEYS.some((secretKey) => key.toLowerCase().includes(secretKey.toLowerCase())))
+      .filter(([key]) => !isSensitiveCoreBridgeKey(key))
       .map(([key, value]) => [key, stripSecretLikeCoreBridgeFields(value)]),
   ) as T;
 }
 
 export function normalizeCoreOpportunityPayload(input: Partial<CoreOpportunityPayload> = {}): CoreOpportunityPayload {
   const safe = stripSecretLikeCoreBridgeFields(input) as Partial<CoreOpportunityPayload>;
-  const repo = safe.repo ?? {};
-  const technical = safe.technical ?? {};
-  const commercial = safe.commercial ?? {};
-  const safety = safe.safety ?? {};
+  const repo = (safe.repo ?? {}) as Partial<CoreOpportunityPayload['repo']>;
+  const technical = (safe.technical ?? {}) as Partial<CoreOpportunityPayload['technical']>;
+  const commercial = (safe.commercial ?? {}) as Partial<CoreOpportunityPayload['commercial']>;
+  const safety = (safe.safety ?? {}) as Partial<CoreOpportunityPayload['safety']>;
 
   return {
     source: 'gxeon-core',
@@ -209,9 +239,9 @@ export function normalizeForgeProductReadyPayload(
   input: Partial<ForgeProductReadyPayload> = {},
 ): ForgeProductReadyPayload {
   const safe = stripSecretLikeCoreBridgeFields(input) as Partial<ForgeProductReadyPayload>;
-  const product = safe.product ?? {};
-  const integrationRequest = safe.integrationRequest ?? {};
-  const approval = safe.approval ?? {};
+  const product = (safe.product ?? {}) as Partial<ForgeProductReadyPayload['product']>;
+  const integrationRequest = (safe.integrationRequest ?? {}) as Partial<ForgeProductReadyPayload['integrationRequest']>;
+  const approval = (safe.approval ?? {}) as Partial<ForgeProductReadyPayload['approval']>;
 
   return {
     source: 'gxeon-app-forge',
