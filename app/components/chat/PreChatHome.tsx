@@ -11,11 +11,9 @@ import { IntegrationReadinessMvp } from '~/components/gxeon/IntegrationReadiness
 import { ApprovalLedgerMvp } from '~/components/gxeon/ApprovalLedgerMVP';
 import { BetaProductPipelineMvp } from '~/components/gxeon/BetaProductPipelineMVP';
 import { RevenueLedgerMvp } from '~/components/gxeon/RevenueLedgerMVP';
-import { ProductCatalogMvp } from '~/components/gxeon/ProductCatalogMVP';
 import { AgentOperatingLayerMvp } from '~/components/gxeon/AgentOperatingLayerMVP';
-import { ProductCatalogMvp } from '~/components/gxeon/ProductCatalogMVP';
+import { CoreBridgeMvp } from '~/components/gxeon/CoreBridgeMVP';
 import { OperatorWorkspaceShell } from '~/components/gxeon/OperatorWorkspaceShell';
-import { ProductCatalogMvp } from '~/components/gxeon/ProductCatalogMVP';
 import type { OperatorWorkspaceModuleKey } from '~/lib/gxeon/operatorWorkspace';
 import type { Message } from 'ai';
 
@@ -44,8 +42,8 @@ const MACHINE_STATUS = [
   'Beta Product Pipeline local-only',
   'Revenue Ledger local-only',
   'Product Catalog local-only',
+  'Core Bridge dry-run-only',
   'Command Center tabs',
-  'Product Catalog local-only',
   'Agent-ready gated',
   'Human-approved gates',
 ];
@@ -53,7 +51,6 @@ const MACHINE_STATUS = [
 const MODULES = [
   { title: 'Product Builder', subtitle: 'Oferta, avatar e estrutura' },
   { title: 'Product Catalog', subtitle: 'Catálogo local de produtos e assets' },
-  { title: 'Product Catalog', subtitle: 'Produtos e assets locais' },
   { title: 'Landing Builder', subtitle: 'Páginas de venda e captura' },
   { title: 'Marketplace Pack Generator', subtitle: 'Packs comerciais sem APIs reais' },
   { title: 'Checkout Blueprint', subtitle: 'Preço, plano e pós-compra manual' },
@@ -62,6 +59,7 @@ const MODULES = [
   { title: 'Approval Ledger', subtitle: 'Aprovações, riscos e evidências locais' },
   { title: 'Beta Pipeline', subtitle: 'Estágios, prioridades e gates locais' },
   { title: 'Revenue Ledger', subtitle: 'Hipóteses, confirmações manuais e custos locais' },
+  { title: 'Core Bridge', subtitle: 'Contrato local dry-run para integrações futuras' },
   { title: 'Product Catalog', subtitle: 'Catálogo local consolidado com imports explícitos' },
   { title: 'Agent Operating Layer', subtitle: 'Seletores, playbooks e logs locais para agentes futuros' },
   { title: 'Command Center Tabs', subtitle: 'Workspace por abas para navegação local' },
@@ -106,14 +104,14 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
         return <ContentFactoryMvp setPrompt={applyProductFactoryMode} />;
       case 'IntegrationReadinessMVP':
         return <IntegrationReadinessMvp setPrompt={applyProductFactoryMode} />;
+      case 'CoreBridgeMVP':
+        return <CoreBridgeMvp />;
       case 'ApprovalLedgerMVP':
         return <ApprovalLedgerMvp />;
       case 'BetaProductPipelineMVP':
         return <BetaProductPipelineMvp />;
       case 'RevenueLedgerMVP':
         return <RevenueLedgerMvp />;
-      case 'ProductCatalogMVP':
-        return <ProductCatalogMvp />;
       case 'AgentOperatingLayerMVP':
         return <AgentOperatingLayerMvp />;
       default:
