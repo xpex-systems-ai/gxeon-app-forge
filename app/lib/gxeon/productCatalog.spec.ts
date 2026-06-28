@@ -6,6 +6,7 @@ import {
   PRODUCT_CATALOG_STATUSES,
   PRODUCT_CATALOG_STORAGE_KEY,
   buildProductCatalogExport,
+  buildProductCatalogLocalImportDraft,
   buildProductCatalogJson,
   buildProductCatalogMarkdown,
   createProductCatalogAsset,
@@ -102,6 +103,48 @@ describe('product catalog helpers', () => {
   it('generates markdown and safe slugs', () => {
     expect(generateProductCatalogSlug('  Café Produto!!!  ')).toBe('cafe-produto');
     expect(buildProductCatalogMarkdown([createProductCatalogItem({ productName: 'Alpha' })], [])).toContain('Alpha');
+  });
+
+  it('builds safe local import drafts from product builder-style sources', () => {
+    const draft = buildProductCatalogLocalImportDraft(
+      'ProductBuilderMVP',
+      {
+        idea: 'AI Ops Kit',
+        niche: 'operations',
+        targetAudience: 'solo operators',
+        problem: 'manual reporting',
+        offer: 'templates',
+        promise: 'faster reviews',
+        desiredPrice: 'R$ 297',
+        apiKey: 'secret',
+      },
+      '2026-06-28T00:00:00.000Z',
+    );
+
+    expect(draft.product).toMatchObject({
+      productName: 'AI Ops Kit',
+      niche: 'operations',
+      audience: 'solo operators',
+      basePrice: 'R$ 297',
+      status: 'needs_review',
+      sourceModules: ['ProductBuilderMVP'],
+    });
+    expect(draft.asset.contentPreview.toLowerCase()).not.toContain('apikey');
+    expect(draft.asset.localOnly).toBe(true);
+  });
+
+  it('builds safe local import drafts from sourceProductIdea-style sources', () => {
+    const draft = buildProductCatalogLocalImportDraft('MarketplacePackGeneratorMVP', {
+      sourceProductIdea: 'Catalog Course',
+      sourceAudience: 'creators',
+      sourcePrice: 'US$ 49',
+      webhookUrl: 'https://example.test/webhook',
+    });
+
+    expect(draft.product.productName).toBe('Catalog Course');
+    expect(draft.product.audience).toBe('creators');
+    expect(draft.product.basePrice).toBe('US$ 49');
+    expect(draft.asset.contentPreview.toLowerCase()).not.toContain('webhook');
   });
 
   it('excludes secret-like keys and values from records and previews', () => {

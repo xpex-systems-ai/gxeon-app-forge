@@ -5,6 +5,7 @@ import {
   PRODUCT_CATALOG_CHANNELS,
   PRODUCT_CATALOG_STATUSES,
   PRODUCT_CATALOG_STORAGE_KEY,
+  buildProductCatalogLocalImportDraft,
   buildProductCatalogMarkdown,
   createProductCatalogAsset,
   createProductCatalogItem,
@@ -18,6 +19,12 @@ import {
   type ProductCatalogItem,
   type ProductCatalogStatus,
 } from '~/lib/gxeon/productCatalog';
+import { PRODUCT_BUILDER_STORAGE_KEY } from '~/lib/gxeon/productBuilder';
+import { MARKETPLACE_PACK_STORAGE_KEY } from '~/lib/gxeon/marketplacePack';
+import { CHECKOUT_BLUEPRINT_STORAGE_KEY } from '~/lib/gxeon/checkoutBlueprint';
+import { LANDING_BUILDER_STORAGE_KEY } from '~/lib/gxeon/landingBuilder';
+import { CONTENT_FACTORY_STORAGE_KEY } from '~/lib/gxeon/contentFactory';
+import { INTEGRATION_READINESS_STORAGE_KEY } from '~/lib/gxeon/integrationReadiness';
 
 type ProductDraft = Pick<
   Partial<ProductCatalogItem>,
@@ -67,6 +74,15 @@ const emptyAssetDraft = (): AssetDraft => ({
 const splitTags = (value: string | string[] | undefined) =>
   (Array.isArray(value) ? value : String(value || '').split(',')).map((item) => item.trim()).filter(Boolean);
 
+const LOCAL_IMPORT_SOURCES = [
+  { label: 'Product Builder', key: PRODUCT_BUILDER_STORAGE_KEY, sourceModule: 'ProductBuilderMVP' },
+  { label: 'Marketplace Pack', key: MARKETPLACE_PACK_STORAGE_KEY, sourceModule: 'MarketplacePackGeneratorMVP' },
+  { label: 'Checkout Blueprint', key: CHECKOUT_BLUEPRINT_STORAGE_KEY, sourceModule: 'CheckoutBlueprintMVP' },
+  { label: 'Landing Builder', key: LANDING_BUILDER_STORAGE_KEY, sourceModule: 'LandingBuilderMVP' },
+  { label: 'Content Factory', key: CONTENT_FACTORY_STORAGE_KEY, sourceModule: 'ContentFactoryMVP' },
+  { label: 'Integration Readiness', key: INTEGRATION_READINESS_STORAGE_KEY, sourceModule: 'IntegrationReadinessMVP' },
+] as const;
+
 export function ProductCatalogMvp() {
   const [items, setItems] = useState<ProductCatalogItem[]>(() =>
     readLocalStorage<Partial<ProductCatalogItem>[]>(PRODUCT_CATALOG_STORAGE_KEY, []).map((item) =>
@@ -113,6 +129,20 @@ export function ProductCatalogMvp() {
   const exportJson = () => {
     const payload = stringifyProductCatalogJson(items, assets);
     setStatus(payload);
+  };
+
+  const importLocalDraft = (source: (typeof LOCAL_IMPORT_SOURCES)[number]) => {
+    const raw = readLocalStorage<Record<string, unknown> | null>(source.key, null);
+
+    if (!raw) {
+      setStatus(`Nenhum rascunho local encontrado em ${source.key}.`);
+      return;
+    }
+
+    const draft = buildProductCatalogLocalImportDraft(source.sourceModule, raw);
+    setItems((current) => [draft.product, ...current.filter((item) => item.id !== draft.product.id)]);
+    setAssets((current) => [draft.asset, ...current.filter((asset) => asset.id !== draft.asset.id)]);
+    setStatus(`Importado localmente de ${source.label}; revise e salve manualmente.`);
   };
 
   return (
@@ -222,6 +252,24 @@ export function ProductCatalogMvp() {
           <button type="button" className="mt-3 rounded bg-white/10 px-3 py-2 text-xs font-bold" onClick={addAsset}>
             Adicionar asset
           </button>
+        </div>
+      </div>
+
+      <div className="mt-3 rounded-xl border border-white/10 p-3">
+        <p className="mb-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#d9a441]">
+          Imports locais explícitos
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {LOCAL_IMPORT_SOURCES.map((source) => (
+            <button
+              key={source.key}
+              type="button"
+              className="rounded bg-white/10 px-3 py-2 text-xs"
+              onClick={() => importLocalDraft(source)}
+            >
+              Importar {source.label}
+            </button>
+          ))}
         </div>
       </div>
 
