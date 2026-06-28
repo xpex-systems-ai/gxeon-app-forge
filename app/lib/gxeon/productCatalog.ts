@@ -179,6 +179,18 @@ function list(value: unknown, max = 12): string[] {
     .slice(0, max);
 }
 
+function firstCatalogValue(record: Record<string, unknown>, keys: readonly string[], max = 240): string {
+  for (const key of keys) {
+    const value = sanitizeProductCatalogValue(record[key], max);
+
+    if (value) {
+      return value;
+    }
+  }
+
+  return '';
+}
+
 function channels(value: unknown): ProductCatalogChannel[] {
   const safe = list(value).filter((item): item is ProductCatalogChannel =>
     PRODUCT_CATALOG_CHANNELS.includes(item as ProductCatalogChannel),
@@ -355,4 +367,49 @@ export function stringifyProductCatalogJson(
 
 export function serializeCatalogPreview(value: unknown): string {
   return sanitizeProductCatalogValue(JSON.stringify(stripSecretLikeFields(value), null, 2), MAX_PREVIEW);
+}
+
+export function buildProductCatalogLocalImportDraft(raw: Record<string, unknown>, now = nowIso()) {
+  const safe = stripSecretLikeFields(raw);
+  const productName = firstCatalogValue(
+    safe,
+    ['productName', 'productTitle', 'sourceProductIdea', 'idea', 'name', 'title', 'offerName'],
+    120,
+  );
+  const product = createProductCatalogItem(
+    {
+      productName,
+      niche: firstCatalogValue(safe, ['niche', 'sourceNiche', 'category'], 240),
+      audience: firstCatalogValue(safe, ['audience', 'targetAudience', 'sourceAudience', 'avatar'], 240),
+      problem: firstCatalogValue(safe, ['problem', 'painPoint', 'sourceProblem'], 240),
+      offer: firstCatalogValue(safe, ['offer', 'sourceOffer', 'offerName'], 240),
+      promise: firstCatalogValue(safe, ['promise', 'outcome', 'transformation'], 240),
+      basePrice: firstCatalogValue(safe, ['basePrice', 'desiredPrice', 'price', 'suggestedPrice'], 80),
+      status: 'draft',
+      tags: list(safe.tags),
+      sourceModules: ['ProductCatalogLocalImport'],
+      approvalStatus: 'pending_manual_review',
+      betaPipelineStatus: 'not_started',
+      revenueStatus: 'not_started',
+      nextAction: 'manual review',
+    },
+    now,
+  );
+  const asset = createProductCatalogAsset(
+    {
+      productId: product.id,
+      assetType: 'product_blueprint',
+      channel: 'internal',
+      title: `${product.productName} — import local`,
+      sourceModule: 'ProductCatalogLocalImport',
+      summary: 'Import local manual-first; nenhuma ação externa executada.',
+      approvalNotes: 'Revisão humana obrigatória antes de qualquer uso externo.',
+      contentPreview: serializeCatalogPreview(raw),
+      tags: list(safe.tags),
+      status: 'draft',
+    },
+    now,
+  );
+
+  return { product, asset };
 }
