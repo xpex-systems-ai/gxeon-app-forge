@@ -280,6 +280,75 @@ export function createProductCatalogAsset(
   return normalizeProductCatalogAsset(input, now);
 }
 
+export function pickFirstCatalogText(raw: Record<string, unknown>, keys: string[], max = 240): string {
+  for (const key of keys) {
+    const value = sanitizeProductCatalogValue(raw[key], max);
+
+    if (value) {
+      return value;
+    }
+  }
+
+  return '';
+}
+
+export function buildProductCatalogLocalImportDraft(
+  input: Record<string, unknown> = {},
+  now = nowIso(),
+): { product: ProductCatalogItem; asset: ProductCatalogAsset } {
+  const raw = stripSecretLikeFields(input);
+  const product = createProductCatalogItem(
+    {
+      productName: pickFirstCatalogText(raw, [
+        'productName',
+        'productTitle',
+        'sourceProductIdea',
+        'idea',
+        'name',
+        'title',
+        'offerName',
+      ]),
+      niche: pickFirstCatalogText(raw, ['niche', 'sourceNiche', 'market']),
+      audience: pickFirstCatalogText(raw, ['audience', 'targetAudience', 'sourceAudience', 'avatar', 'persona']),
+      problem: pickFirstCatalogText(raw, ['problem', 'sourceProblem', 'painPoint']),
+      offer: pickFirstCatalogText(raw, ['offer', 'sourceOffer', 'offerSummary']),
+      promise: pickFirstCatalogText(raw, ['promise', 'transformation', 'valuePromise']),
+      basePrice: pickFirstCatalogText(raw, ['basePrice', 'price', 'suggestedPrice'], 80),
+      status: 'draft',
+      tags: ['imported-local-draft'],
+      channels: ['internal'],
+      sourceModules: list(raw.sourceModule || raw.sourceModules || 'local-import', 4),
+      nextAction: 'manual review',
+    },
+    now,
+  );
+
+  const asset = createProductCatalogAsset(
+    {
+      productId: product.id,
+      assetType: 'json',
+      channel: 'internal',
+      title:
+        pickFirstCatalogText(
+          raw,
+          ['assetTitle', 'title', 'productName', 'productTitle', 'sourceProductIdea', 'idea'],
+          140,
+        ) || `${product.productName} local import`,
+      sourceModule: pickFirstCatalogText(raw, ['sourceModule'], 120) || 'local-import',
+      summary: 'Local import draft generated from a sanitized workspace payload.',
+      contentPreview: serializeCatalogPreview(raw),
+      tags: ['imported-local-draft'],
+      status: 'draft',
+    },
+    now,
+  );
+
+  return {
+    product: normalizeProductCatalogItem({ ...product, assetIds: [asset.id] }, now),
+    asset,
+  };
+}
+
 export function summarizeProductCatalog(
   products: ProductCatalogItem[] = [],
   assets: ProductCatalogAsset[] = [],
