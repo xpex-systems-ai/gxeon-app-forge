@@ -7,6 +7,7 @@ import {
   PRODUCT_CATALOG_STORAGE_KEY,
   buildProductCatalogExport,
   buildProductCatalogJson,
+  buildProductCatalogLocalImportDraft,
   buildProductCatalogMarkdown,
   createProductCatalogAsset,
   createProductCatalogItem,
@@ -102,6 +103,33 @@ describe('product catalog helpers', () => {
   it('generates markdown and safe slugs', () => {
     expect(generateProductCatalogSlug('  Café Produto!!!  ')).toBe('cafe-produto');
     expect(buildProductCatalogMarkdown([createProductCatalogItem({ productName: 'Alpha' })], [])).toContain('Alpha');
+  });
+
+  it('builds local import drafts from Product Builder idea and targetAudience fields', () => {
+    const fakeKey = ['sk', '123456789abc'].join('-');
+    const imported = buildProductCatalogLocalImportDraft({
+      idea: 'Curso IA para corretores',
+      targetAudience: 'Corretores autônomos iniciantes',
+      niche: 'Imóveis',
+      apiKey: fakeKey,
+    });
+
+    expect(imported.product.productName).toBe('Curso IA para corretores');
+    expect(imported.product.audience).toBe('Corretores autônomos iniciantes');
+    expect(imported.product.niche).toBe('Imóveis');
+    expect(imported.asset.contentPreview).toContain('Curso IA para corretores');
+    expect(imported.asset.contentPreview.toLowerCase()).not.toContain('apikey');
+    expect(imported.asset.contentPreview).not.toContain('sk-');
+  });
+
+  it('keeps sourceProductIdea local import name support', () => {
+    const imported = buildProductCatalogLocalImportDraft({
+      sourceProductIdea: 'Pack para gestores de tráfego',
+      sourceAudience: 'Gestores freelancers',
+    });
+
+    expect(imported.product.productName).toBe('Pack para gestores de tráfego');
+    expect(imported.product.audience).toBe('Gestores freelancers');
   });
 
   it('excludes secret-like keys and values from records and previews', () => {
