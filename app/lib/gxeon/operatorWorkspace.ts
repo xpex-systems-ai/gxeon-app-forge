@@ -141,6 +141,13 @@ export const OPERATOR_WORKSPACE_TABS: readonly OperatorWorkspaceTabDefinition[] 
     safetyNote: 'Navegação local; nenhuma geração automática ou envio ao Composer.',
   },
   {
+    id: 'catalog',
+    label: 'Catálogo',
+    description: 'Consolide produtos e assets locais antes de distribuição manual.',
+    moduleKeys: ['ProductCatalogMVP'],
+    safetyNote: 'Importações leem localStorage somente após clique e exigem revisão humana.',
+  },
+  {
     id: 'package',
     label: 'Embalar',
     description: 'Prepare marketplace, landing e campanha sem integrações externas.',
@@ -174,13 +181,6 @@ export const OPERATOR_WORKSPACE_TABS: readonly OperatorWorkspaceTabDefinition[] 
     description: 'Revise o contrato Core Bridge local antes de qualquer integração real futura.',
     moduleKeys: ['CoreBridgeMVP'],
     safetyNote: 'Core Bridge permanece local-only, dry-run-only e exige aprovação humana.',
-  },
-  {
-    id: 'catalog',
-    label: 'Catálogo',
-    description: 'Consolide produtos e assets locais antes de distribuição manual.',
-    moduleKeys: ['ProductCatalogMVP'],
-    safetyNote: 'Importações leem localStorage somente após clique e exigem revisão humana.',
   },
   {
     id: 'agent',

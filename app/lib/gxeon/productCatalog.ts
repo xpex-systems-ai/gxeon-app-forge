@@ -134,7 +134,7 @@ export interface ProductCatalogExport {
 }
 
 const SECRET_KEY_RE =
-  /(secret|token|api[_-]?key|apikey|password|passwd|authorization|credential|private[_-]?key|access[_-]?key|refresh[_-]?token|webhook[_-]?(url|secret|token)|checkout[_-]?url)/i;
+  /(secret|token|api[_-]?key|apikey|password|passwd|authorization|credential|private[_-]?key|cookie|access[_-]?key|refresh[_-]?token|webhook[_-]?(url|secret|token)|checkout[_-]?url)/i;
 const SECRET_VALUE_RE =
   /(sk-[a-z0-9]{12,}|ghp_[a-z0-9_]{20,}|xox[baprs]-[a-z0-9-]{10,}|bearer\s+[^\s]+(?:\s+[^\s]+)?|https?:\/\/[^\s]+webhook[^\s]*)/i;
 const CONTROL_RE = /[\u0000-\u001f\u007f|`<>]/g;
@@ -205,6 +205,64 @@ export function stripSecretLikeFields<T>(input: T): T {
 }
 
 export const stripSecretLikeData = stripSecretLikeFields as (value: unknown) => unknown;
+
+export interface ProductCatalogLocalImportDraft {
+  product: Partial<ProductCatalogItem>;
+  asset: Partial<ProductCatalogAsset>;
+}
+
+export function pickFirstCatalogText(source: Record<string, unknown>, keys: string[], max = 240): string {
+  for (const key of keys) {
+    const value = sanitizeProductCatalogValue(source[key], max);
+
+    if (value) {
+      return value;
+    }
+  }
+
+  return '';
+}
+
+export function buildProductCatalogLocalImportDraft(
+  raw: Record<string, unknown>,
+  sourceModule = 'Local draft import',
+): ProductCatalogLocalImportDraft | null {
+  const productName = pickFirstCatalogText(
+    raw,
+    ['productName', 'productTitle', 'sourceProductIdea', 'idea', 'name', 'title', 'offerName'],
+    120,
+  );
+
+  if (!productName) {
+    return null;
+  }
+
+  const assetTitle =
+    pickFirstCatalogText(raw, ['title', 'assetTitle', 'productTitle', 'offerName', 'sourceProductIdea', 'idea'], 120) ||
+    `${productName} — ${sourceModule}`;
+
+  return {
+    product: {
+      productName,
+      niche: pickFirstCatalogText(raw, ['niche', 'sourceNiche', 'market', 'segment']),
+      audience: pickFirstCatalogText(raw, ['audience', 'sourceAudience', 'avatar', 'persona']),
+      offer: pickFirstCatalogText(raw, ['offer', 'sourceOffer', 'offerName', 'promise']),
+      status: 'draft',
+      tags: ['imported-local-draft'],
+      sourceModules: [sourceModule],
+    },
+    asset: {
+      assetType: 'json',
+      channel: 'internal',
+      title: assetTitle,
+      sourceModule,
+      summary: `Importação local manual de ${sourceModule}.`,
+      contentPreview: serializeCatalogPreview(raw),
+      tags: ['imported-local-draft'],
+      status: 'draft',
+    },
+  };
+}
 
 export function normalizeProductCatalogItem(
   input: Partial<ProductCatalogItem> = {},

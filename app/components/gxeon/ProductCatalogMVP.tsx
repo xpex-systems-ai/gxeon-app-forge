@@ -5,6 +5,7 @@ import {
   PRODUCT_CATALOG_CHANNELS,
   PRODUCT_CATALOG_STATUSES,
   PRODUCT_CATALOG_STORAGE_KEY,
+  buildProductCatalogLocalImportDraft,
   buildProductCatalogMarkdown,
   createProductCatalogAsset,
   createProductCatalogItem,
@@ -18,6 +19,12 @@ import {
   type ProductCatalogItem,
   type ProductCatalogStatus,
 } from '~/lib/gxeon/productCatalog';
+import { PRODUCT_BUILDER_STORAGE_KEY } from '~/lib/gxeon/productBuilder';
+import { MARKETPLACE_PACK_STORAGE_KEY } from '~/lib/gxeon/marketplacePack';
+import { CHECKOUT_BLUEPRINT_STORAGE_KEY } from '~/lib/gxeon/checkoutBlueprint';
+import { LANDING_BUILDER_STORAGE_KEY } from '~/lib/gxeon/landingBuilder';
+import { CONTENT_FACTORY_STORAGE_KEY } from '~/lib/gxeon/contentFactory';
+import { INTEGRATION_READINESS_STORAGE_KEY } from '~/lib/gxeon/integrationReadiness';
 
 type ProductDraft = Pick<
   Partial<ProductCatalogItem>,
@@ -64,6 +71,15 @@ const emptyAssetDraft = (): AssetDraft => ({
   status: 'draft',
 });
 
+const LOCAL_DRAFT_IMPORTS = [
+  { label: 'Product Builder', key: PRODUCT_BUILDER_STORAGE_KEY, sourceModule: 'ProductBuilderMVP' },
+  { label: 'Marketplace Pack', key: MARKETPLACE_PACK_STORAGE_KEY, sourceModule: 'MarketplacePackGeneratorMVP' },
+  { label: 'Checkout Blueprint', key: CHECKOUT_BLUEPRINT_STORAGE_KEY, sourceModule: 'CheckoutBlueprintMVP' },
+  { label: 'Landing Builder', key: LANDING_BUILDER_STORAGE_KEY, sourceModule: 'LandingBuilderMVP' },
+  { label: 'Content Factory', key: CONTENT_FACTORY_STORAGE_KEY, sourceModule: 'ContentFactoryMVP' },
+  { label: 'Integration Readiness', key: INTEGRATION_READINESS_STORAGE_KEY, sourceModule: 'IntegrationReadinessMVP' },
+] as const;
+
 const splitTags = (value: string | string[] | undefined) =>
   (Array.isArray(value) ? value : String(value || '').split(',')).map((item) => item.trim()).filter(Boolean);
 
@@ -102,6 +118,40 @@ export function ProductCatalogMvp() {
     );
     setAssetDraft(emptyAssetDraft());
     setStatus('Asset adicionado somente ao estado local.');
+  };
+
+  const importLocalDraft = (draftSource: (typeof LOCAL_DRAFT_IMPORTS)[number]) => {
+    if (typeof window === 'undefined') {
+      setStatus('Importação local indisponível fora do navegador.');
+      return;
+    }
+
+    try {
+      const stored = window.localStorage.getItem(draftSource.key);
+
+      if (!stored) {
+        setStatus(`Nenhum rascunho local encontrado para ${draftSource.label}.`);
+        return;
+      }
+
+      const raw = JSON.parse(stored) as Record<string, unknown>;
+      const imported = buildProductCatalogLocalImportDraft(raw, draftSource.sourceModule);
+
+      if (!imported) {
+        setStatus(`Rascunho de ${draftSource.label} sem nome de produto importável.`);
+        return;
+      }
+
+      const item = createProductCatalogItem(imported.product);
+      const asset = createProductCatalogAsset({ ...imported.asset, productId: item.id });
+      const linkedItem = { ...item, assetIds: Array.from(new Set([...item.assetIds, asset.id])) };
+
+      setItems((current) => [linkedItem, ...current.filter((existing) => existing.id !== linkedItem.id)]);
+      setAssets((current) => [asset, ...current.filter((existing) => existing.id !== asset.id)]);
+      setStatus(`Rascunho de ${draftSource.label} importado somente para o estado local do catálogo.`);
+    } catch {
+      setStatus(`Rascunho local de ${draftSource.label} inválido ou inacessível.`);
+    }
   };
 
   const saveCatalog = () => {
@@ -222,6 +272,25 @@ export function ProductCatalogMvp() {
           <button type="button" className="mt-3 rounded bg-white/10 px-3 py-2 text-xs font-bold" onClick={addAsset}>
             Adicionar asset
           </button>
+        </div>
+      </div>
+
+      <div className="mt-3 rounded-xl border border-white/10 p-3">
+        <h4 className="text-sm font-bold">Importar rascunhos locais</h4>
+        <p className="mt-1 text-[11px] text-white/60">
+          Importação manual por clique; lê apenas localStorage e salva prévias sanitizadas no catálogo.
+        </p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {LOCAL_DRAFT_IMPORTS.map((draftSource) => (
+            <button
+              key={draftSource.key}
+              type="button"
+              className="rounded bg-white/10 px-3 py-2 text-xs"
+              onClick={() => importLocalDraft(draftSource)}
+            >
+              Importar {draftSource.label}
+            </button>
+          ))}
         </div>
       </div>
 
