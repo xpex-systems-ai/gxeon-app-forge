@@ -6,6 +6,7 @@ import {
   PRODUCT_CATALOG_STATUSES,
   PRODUCT_CATALOG_STORAGE_KEY,
   buildProductCatalogExport,
+  buildProductCatalogLocalImportDraft,
   buildProductCatalogJson,
   buildProductCatalogMarkdown,
   createProductCatalogAsset,
@@ -107,9 +108,58 @@ describe('product catalog helpers', () => {
   it('excludes secret-like keys and values from records and previews', () => {
     expect(stripSecretLikeFields({ apiKey: 'x', nested: { token: 'y', ok: 'z' } })).toEqual({ nested: { ok: 'z' } });
 
-    const preview = serializeCatalogPreview({ title: 'ok', apiKey: 'abc', nested: { value: 'bearer token hidden' } });
+    const preview = serializeCatalogPreview({
+      title: 'ok',
+      apiKey: 'abc',
+      password: 'hidden',
+      authorization: `Bearer ${'sk'}-${'123456789abc'}`,
+      cookie: 'session=secret',
+      nested: { token: `${'ghp'}_${'abcdefghijklmnopqrstuvwxyz'}`, private_key: 'pem', value: 'safe' },
+    });
     expect(preview).toContain('ok');
+    expect(preview).toContain('safe');
+    expect(preview.length).toBeLessThanOrEqual(900);
     expect(preview.toLowerCase()).not.toContain('apikey');
+    expect(preview.toLowerCase()).not.toContain('password');
+    expect(preview.toLowerCase()).not.toContain('authorization');
+    expect(preview.toLowerCase()).not.toContain('private_key');
     expect(preview.toLowerCase()).not.toContain('bearer');
+    expect(preview.toLowerCase()).not.toContain('ghp_');
+  });
+
+  it('builds local import drafts from Product Builder idea fields with sanitized previews', () => {
+    const imported = buildProductCatalogLocalImportDraft(
+      { idea: 'Curso IA para corretores', niche: 'Imóveis', apiKey: `${'sk'}-${'123456789abc'}` },
+      'ProductBuilderMVP',
+    );
+
+    expect(imported).not.toBeNull();
+    expect(imported!.product.productName).toBe('Curso IA para corretores');
+    expect(imported!.product.niche).toBe('Imóveis');
+
+    const productBuilderPreview = String(imported!.asset.contentPreview);
+    expect(productBuilderPreview).toContain('Curso IA para corretores');
+    expect(productBuilderPreview.toLowerCase()).not.toContain('apikey');
+    expect(productBuilderPreview.toLowerCase()).not.toContain('sk-');
+  });
+
+  it('builds local import drafts from sourceProductIdea module fields', () => {
+    const imported = buildProductCatalogLocalImportDraft(
+      {
+        sourceProductIdea: 'Kit de landing pages',
+        sourceAudience: 'Founders',
+        token: `${'ghp'}_${'abcdefghijklmnopqrstuvwxyz'}`,
+      },
+      'LandingBuilderMVP',
+    );
+
+    expect(imported).not.toBeNull();
+    expect(imported!.product.productName).toBe('Kit de landing pages');
+    expect(imported!.product.audience).toBe('Founders');
+    expect(imported!.asset.title).toBe('Kit de landing pages');
+
+    const sourceProductIdeaPreview = String(imported!.asset.contentPreview);
+    expect(sourceProductIdeaPreview.toLowerCase()).not.toContain('token');
+    expect(sourceProductIdeaPreview.toLowerCase()).not.toContain('ghp_');
   });
 });

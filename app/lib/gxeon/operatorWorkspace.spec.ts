@@ -10,7 +10,7 @@ describe('operator workspace metadata', () => {
   it('uses unique tab ids and includes all required tabs', () => {
     const ids = getOperatorWorkspaceTabs().map((tab) => tab.id);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(ids).toEqual(['create', 'package', 'monetize', 'validate', 'integrate', 'core', 'catalog', 'agent']);
+    expect(ids).toEqual(['create', 'catalog', 'package', 'monetize', 'validate', 'integrate', 'core', 'agent']);
   });
 
   it('assigns at least one module key to every tab and keeps Core/Product Catalog modules', () => {
@@ -26,12 +26,12 @@ describe('operator workspace metadata', () => {
     expect(summary.moduleCount).toBe(12);
     expect(summary.tabIds).toEqual([
       'create',
+      'catalog',
       'package',
       'monetize',
       'validate',
       'integrate',
       'core',
-      'catalog',
       'agent',
     ]);
     expect(summary.moduleKeys).toContain('CoreBridgeMVP');
