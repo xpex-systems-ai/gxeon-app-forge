@@ -356,3 +356,58 @@ export function stringifyProductCatalogJson(
 export function serializeCatalogPreview(value: unknown): string {
   return sanitizeProductCatalogValue(JSON.stringify(stripSecretLikeFields(value), null, 2), MAX_PREVIEW);
 }
+
+export interface ProductCatalogLocalImportDraft {
+  sourceModule: string;
+  product: ProductCatalogItem;
+  asset: ProductCatalogAsset;
+}
+
+export function buildProductCatalogLocalImportDraft(
+  sourceModule: string,
+  source: Record<string, unknown> = {},
+  now = nowIso(),
+): ProductCatalogLocalImportDraft {
+  const safe = stripSecretLikeFields(source) as Record<string, unknown>;
+  const productName =
+    sanitizeProductCatalogValue(safe.productName || safe.idea || safe.sourceProductIdea || safe.title, 120) ||
+    `${sanitizeProductCatalogValue(sourceModule, 80) || 'Local'} import`;
+  const product = normalizeProductCatalogItem(
+    {
+      productName,
+      niche: sanitizeProductCatalogValue(safe.niche || safe.sourceNiche),
+      audience: sanitizeProductCatalogValue(safe.audience || safe.targetAudience || safe.sourceAudience),
+      problem: sanitizeProductCatalogValue(safe.problem || safe.sourceProblem),
+      offer: sanitizeProductCatalogValue(safe.offer || safe.sourceOffer || safe.sourceOfferOrPromise),
+      promise: sanitizeProductCatalogValue(safe.promise || safe.sourcePromise),
+      basePrice: sanitizeProductCatalogValue(
+        safe.basePrice || safe.desiredPrice || safe.sourcePrice || safe.plannedPrice,
+      ),
+      status: 'needs_review',
+      channels: channels(safe.channels),
+      tags: list(safe.tags),
+      sourceModules: [sourceModule],
+      nextAction: 'manual catalog review',
+    },
+    now,
+  );
+  const asset = normalizeProductCatalogAsset(
+    {
+      productId: product.id,
+      assetType: oneOf(PRODUCT_CATALOG_ASSET_TYPES, safe.assetType || safe.type, 'product_blueprint'),
+      channel: oneOf(PRODUCT_CATALOG_CHANNELS, safe.channel, 'internal'),
+      title: `${productName} — ${sanitizeProductCatalogValue(sourceModule, 80) || 'Local import'}`,
+      sourceModule,
+      summary: sanitizeProductCatalogValue(
+        safe.summary || safe.offer || safe.promise || safe.sourceOffer || safe.sourcePromise,
+      ),
+      approvalNotes: sanitizeProductCatalogValue(safe.approvalNotes),
+      contentPreview: serializeCatalogPreview(safe),
+      tags: list(safe.tags),
+      status: 'draft',
+    },
+    now,
+  );
+
+  return { sourceModule: sanitizeProductCatalogValue(sourceModule, 80) || 'Local import', product, asset };
+}
