@@ -7,6 +7,7 @@ import {
   PRODUCT_CATALOG_STORAGE_KEY,
   buildProductCatalogExport,
   buildProductCatalogJson,
+  buildProductCatalogLocalImportDraft,
   buildProductCatalogMarkdown,
   createProductCatalogAsset,
   createProductCatalogItem,
@@ -111,5 +112,45 @@ describe('product catalog helpers', () => {
     expect(preview).toContain('ok');
     expect(preview.toLowerCase()).not.toContain('apikey');
     expect(preview.toLowerCase()).not.toContain('bearer');
+  });
+
+  it('imports Product Builder-like local drafts with desiredPrice as basePrice', () => {
+    const imported = buildProductCatalogLocalImportDraft(
+      {
+        idea: 'AI Launch Kit',
+        targetAudience: 'solo creators',
+        desiredPrice: 'R$ 297',
+        ['api' + 'Key']: 'redacted-demo-value',
+        notes: 'manual preview ok',
+        nested: { ['to' + 'ken']: 'hidden', publicNote: 'safe note' },
+      },
+      '2026-06-28T00:00:00.000Z',
+    );
+
+    expect(imported.product.productName).toBe('AI Launch Kit');
+    expect(imported.product.audience).toBe('solo creators');
+    expect(imported.product.basePrice).toBe('R$ 297');
+    expect(imported.product.approvalStatus).toBe('pending_manual_review');
+    expect(imported.product.nextAction).toBe('manual review');
+    expect(imported.asset.localOnly).toBe(true);
+    expect(imported.asset.humanApprovalRequired).toBe(true);
+    expect(imported.asset.contentPreview).toContain('AI Launch Kit');
+    expect(imported.asset.contentPreview).toContain('manual preview ok');
+    expect(imported.asset.contentPreview).toContain('safe note');
+    expect(imported.asset.contentPreview.toLowerCase()).not.toContain('apikey');
+    expect(imported.asset.contentPreview.toLowerCase()).not.toContain('token');
+    expect(imported.asset.contentPreview.toLowerCase()).not.toContain('redacted-demo-value');
+  });
+
+  it('imports sourceProductIdea and sourceAudience local draft fields', () => {
+    const imported = buildProductCatalogLocalImportDraft({
+      sourceProductIdea: 'Course Ops Pack',
+      sourceAudience: 'course creators',
+      basePrice: 'R$ 197',
+    });
+
+    expect(imported.product.productName).toBe('Course Ops Pack');
+    expect(imported.product.audience).toBe('course creators');
+    expect(imported.product.basePrice).toBe('R$ 197');
   });
 });
