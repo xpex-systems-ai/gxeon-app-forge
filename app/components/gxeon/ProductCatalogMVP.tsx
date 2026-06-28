@@ -1,4 +1,10 @@
 import React, { useMemo, useState } from 'react';
+import { CHECKOUT_BLUEPRINT_STORAGE_KEY } from '~/lib/gxeon/checkoutBlueprint';
+import { CONTENT_FACTORY_STORAGE_KEY } from '~/lib/gxeon/contentFactory';
+import { INTEGRATION_READINESS_STORAGE_KEY } from '~/lib/gxeon/integrationReadiness';
+import { LANDING_BUILDER_STORAGE_KEY } from '~/lib/gxeon/landingBuilder';
+import { MARKETPLACE_PACK_STORAGE_KEY } from '~/lib/gxeon/marketplacePack';
+import { PRODUCT_BUILDER_STORAGE_KEY } from '~/lib/gxeon/productBuilder';
 import {
   PRODUCT_CATALOG_ASSET_STORAGE_KEY,
   PRODUCT_CATALOG_ASSET_TYPES,
@@ -64,6 +70,19 @@ const emptyAssetDraft = (): AssetDraft => ({
   status: 'draft',
 });
 
+const catalogImports = [
+  { key: PRODUCT_BUILDER_STORAGE_KEY, label: 'Product Builder' },
+  { key: MARKETPLACE_PACK_STORAGE_KEY, label: 'Marketplace Pack' },
+  { key: CHECKOUT_BLUEPRINT_STORAGE_KEY, label: 'Checkout Blueprint' },
+  { key: LANDING_BUILDER_STORAGE_KEY, label: 'Landing Builder' },
+  { key: CONTENT_FACTORY_STORAGE_KEY, label: 'Content Factory' },
+  { key: INTEGRATION_READINESS_STORAGE_KEY, label: 'Integration Readiness' },
+] as const;
+
+const pickFirstText = (value: Record<string, unknown>, keys: string[]) =>
+  keys.map((key) => value[key]).find((item): item is string => typeof item === 'string' && item.trim().length > 0) ||
+  '';
+
 const splitTags = (value: string | string[] | undefined) =>
   (Array.isArray(value) ? value : String(value || '').split(',')).map((item) => item.trim()).filter(Boolean);
 
@@ -86,6 +105,12 @@ export function ProductCatalogMvp() {
   const markdown = useMemo(() => buildProductCatalogMarkdown(items, assets), [items, assets]);
 
   const addProduct = () => {
+    if (!productDraft.productName?.trim()) {
+      setStatus('Informe o nome do produto antes de adicionar ao catálogo local.');
+
+      return;
+    }
+
     const item = createProductCatalogItem({ ...productDraft, tags: splitTags(productDraft.tags) });
     setItems((current) => [item, ...current.filter((existing) => existing.id !== item.id)]);
     setProductDraft(emptyProductDraft());
@@ -93,6 +118,18 @@ export function ProductCatalogMvp() {
   };
 
   const addAsset = () => {
+    if (!assetDraft.productId?.trim()) {
+      setStatus('Selecione um produto local antes de adicionar o asset.');
+
+      return;
+    }
+
+    if (!assetDraft.title?.trim()) {
+      setStatus('Informe o título do asset antes de adicionar ao catálogo local.');
+
+      return;
+    }
+
     const asset = createProductCatalogAsset({ ...assetDraft, tags: splitTags(assetDraft.tags) });
     setAssets((current) => [asset, ...current.filter((existing) => existing.id !== asset.id)]);
     setItems((current) =>
@@ -113,6 +150,83 @@ export function ProductCatalogMvp() {
   const exportJson = () => {
     const payload = stringifyProductCatalogJson(items, assets);
     setStatus(payload);
+  };
+
+  const loadCatalog = () => {
+    setItems(
+      readLocalStorage<Partial<ProductCatalogItem>[]>(PRODUCT_CATALOG_STORAGE_KEY, []).map((item) =>
+        normalizeProductCatalogItem(item),
+      ),
+    );
+    setAssets(
+      readLocalStorage<Partial<ProductCatalogAsset>[]>(PRODUCT_CATALOG_ASSET_STORAGE_KEY, []).map((asset) =>
+        normalizeProductCatalogAsset(asset),
+      ),
+    );
+    setStatus('Catálogo carregado do localStorage somente após clique explícito.');
+  };
+
+  const importLocalDraft = (source: (typeof catalogImports)[number]) => {
+    const raw = readLocalStorage<Record<string, unknown> | null>(source.key, null);
+
+    if (!raw) {
+      setStatus(`Nenhum rascunho local encontrado para ${source.label}.`);
+
+      return;
+    }
+
+    const productName = pickFirstText(raw, ['productName', 'productTitle', 'name', 'title', 'offerName']);
+
+    if (!productName.trim()) {
+      setStatus(`${source.label} não possui nome de produto suficiente para importar.`);
+
+      return;
+    }
+
+    const item = createProductCatalogItem({
+      productName,
+      niche: pickFirstText(raw, ['niche', 'market', 'category']),
+      audience: pickFirstText(raw, ['audience', 'avatar', 'targetAudience']),
+      offer: pickFirstText(raw, ['offer', 'valueProposition', 'promise']),
+      status: 'draft',
+      sourceModules: [source.label],
+      tags: [source.label, 'imported-local'],
+    });
+    const asset = createProductCatalogAsset({
+      productId: item.id,
+      title: `${source.label} local checkpoint`,
+      sourceModule: source.label,
+      summary: 'Imported by explicit click from browser localStorage only; review manually before use.',
+      contentPreview: JSON.stringify(raw).slice(0, 900),
+      tags: [source.label, 'local-only'],
+      assetType: source.label === 'Integration Readiness' ? 'integration_dry_run' : 'other',
+      channel: 'internal',
+      status: 'draft',
+    });
+
+    setItems((current) => [
+      { ...item, assetIds: [asset.id] },
+      ...current.filter((existing) => existing.id !== item.id),
+    ]);
+    setAssets((current) => [asset, ...current.filter((existing) => existing.id !== asset.id)]);
+    setStatus(`${source.label} importado localmente; nenhum envio externo foi executado.`);
+  };
+
+  const copyMarkdown = async () => {
+    try {
+      await navigator.clipboard.writeText(markdown);
+      setStatus('Markdown copiado para a área de transferência.');
+    } catch {
+      setStatus('Clipboard indisponível; copie manualmente pelo preview local.');
+    }
+  };
+
+  const clearCatalog = () => {
+    setItems([]);
+    setAssets([]);
+    writeLocalStorage(PRODUCT_CATALOG_STORAGE_KEY, []);
+    writeLocalStorage(PRODUCT_CATALOG_ASSET_STORAGE_KEY, []);
+    setStatus('Catálogo local limpo; somente as chaves localStorage do Product Catalog foram alteradas.');
   };
 
   return (
@@ -229,9 +343,28 @@ export function ProductCatalogMvp() {
         <button type="button" className="rounded bg-white/10 px-3 py-2 text-xs" onClick={saveCatalog}>
           Salvar localStorage
         </button>
+        <button type="button" className="rounded bg-white/10 px-3 py-2 text-xs" onClick={loadCatalog}>
+          Carregar localStorage
+        </button>
         <button type="button" className="rounded bg-white/10 px-3 py-2 text-xs" onClick={exportJson}>
           Gerar JSON local
         </button>
+        <button type="button" className="rounded bg-white/10 px-3 py-2 text-xs" onClick={() => void copyMarkdown()}>
+          Copiar Markdown
+        </button>
+        <button type="button" className="rounded bg-white/10 px-3 py-2 text-xs" onClick={clearCatalog}>
+          Limpar
+        </button>
+        {catalogImports.map((source) => (
+          <button
+            key={source.key}
+            type="button"
+            className="rounded bg-white/10 px-3 py-2 text-xs"
+            onClick={() => importLocalDraft(source)}
+          >
+            Importar {source.label}
+          </button>
+        ))}
       </div>
 
       <pre className="mt-3 max-h-40 overflow-auto rounded bg-black/40 p-2 text-[11px] text-white/70">{status}</pre>
