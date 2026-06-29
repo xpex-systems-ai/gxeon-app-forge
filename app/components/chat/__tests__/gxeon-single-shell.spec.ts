@@ -32,11 +32,14 @@ describe('GXEON founder preview shell composition', () => {
     expect(baseChat.match(/id="composer"/g) ?? []).toHaveLength(1);
     expect(baseChat.match(/<ChatBox/g) ?? []).toHaveLength(1);
     expect(chatBox).toContain('Descreva o produto digital que você quer criar, embalar ou vender hoje.');
-    expect(preChatHome).toContain('Product Factory Mode');
+    expect(preChatHome.match(/Product Factory Mode/g) ?? []).toHaveLength(1);
+    expect(preChatHome.match(/<OperatorWorkspaceShell/g) ?? []).toHaveLength(1);
+    expect(preChatHome).toContain('data-testid="gxeon-product-factory-mode"');
     expect(preChatHome).toContain(
       'Botões preenchem o prompt do compositor real. Nada é enviado automaticamente e nenhuma API externa é',
     );
-    expect(preChatHome).toContain('applyProductFactoryMode(mode.prompt)');
+    expect(preChatHome).not.toContain('Legacy prompt presets');
+    expect(preChatHome).not.toContain('productFactoryModes.map');
     expect(preChatHome).toContain("document.querySelector<HTMLTextAreaElement>('#composer textarea')?.focus()");
     expect(preChatHome).not.toContain('handleSendMessage');
   });

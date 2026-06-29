@@ -34,49 +34,6 @@ import { GxeonProductShellIntro } from './GxeonProductShellIntro';
 
 const TEXTAREA_MIN_HEIGHT = 76;
 
-const PRODUCT_FACTORY_MODES = [
-  {
-    label: 'Criar Produto Digital',
-    prompt:
-      'Criar Produto Digital: estruture um produto digital manual-first em português. Entregue em seções: nome, público, oferta, promessa, preço sugerido, página, canais, checklist e próximos passos. Inclua avatar, transformação esperada, módulos/aulas/entregáveis e critérios de aprovação humana antes de qualquer venda.',
-  },
-  {
-    label: 'Criar Landing Page',
-    prompt:
-      'Criar Landing Page: planeje uma página de venda/captura para um produto digital em português. Entregue: nome, público, oferta, promessa, preço sugerido, página (hero, prova, benefícios, FAQ, CTA), canais, checklist e próximos passos. Não assuma checkout real; trate pagamentos como blueprint futuro com aprovação humana.',
-  },
-  {
-    label: 'Criar Marketplace Pack',
-    prompt:
-      'Criar Marketplace Pack: gere um pacote manual-first para cadastrar um produto digital em marketplaces. Entregue: nome, público, oferta, promessa, preço sugerido, página, canais, checklist e próximos passos. Inclua título, descrição curta, descrição longa, tags, imagens necessárias e observações para Hotmart, Kiwify, Shopee, Mercado Livre e ClickBank sem publicar automaticamente.',
-  },
-  {
-    label: 'Criar Checkout Blueprint',
-    prompt:
-      'Criar Checkout Blueprint: desenhe um blueprint de checkout para produto digital em português. Entregue: nome, público, oferta, promessa, preço sugerido, página, canais, checklist e próximos passos. Inclua plano único, parcelamento sugerido, ordem bump/upsell manual, página de obrigado e mensagens de confirmação sem integrar gateways reais.',
-  },
-  {
-    label: 'Criar Kit de Afiliado',
-    prompt:
-      'Criar Kit de Afiliado: monte um kit manual-first para afiliados venderem um produto digital. Entregue: nome, público, oferta, promessa, preço sugerido, página, canais, checklist e próximos passos. Inclua ângulos de venda, criativos, emails, scripts curtos, regras de uso e materiais pendentes para aprovação humana.',
-  },
-  {
-    label: 'Criar Campanha de Lançamento',
-    prompt:
-      'Criar Campanha de Lançamento: planeje uma campanha em português para lançar um produto digital. Entregue: nome, público, oferta, promessa, preço sugerido, página, canais, checklist e próximos passos. Inclua calendário, conteúdos, emails, lives/webinar, métricas de evidência e pontos de decisão manual.',
-  },
-  {
-    label: 'Criar SaaS Starter',
-    prompt:
-      'Criar SaaS Starter: estruture um SaaS starter vendável em português. Entregue: nome, público, oferta, promessa, preço sugerido, página, canais, checklist e próximos passos. Inclua funcionalidades MVP, onboarding, limites de planos, stack sugerida e riscos, sem criar integrações reais ou cobrar pagamentos.',
-  },
-  {
-    label: 'Criar Loja/Afiliado',
-    prompt:
-      'Criar Loja/Afiliado: planeje uma loja ou operação afiliada manual-first em português. Entregue: nome, público, oferta, promessa, preço sugerido, página, canais, checklist e próximos passos. Inclua categorias, curadoria de produtos, conteúdo, funil, tracking de evidências e limites antes de integrações de marketplace.',
-  },
-];
-
 interface BaseChatProps {
   textareaRef?: React.RefObject<HTMLTextAreaElement> | undefined;
   messageRef?: RefCallback<HTMLDivElement> | undefined;
@@ -514,20 +471,11 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
             {!chatStarted && (
               <PreChatHome
                 importChat={importChat}
-                productFactoryModes={PRODUCT_FACTORY_MODES}
                 setPrompt={(prompt) => {
                   handleInputChange?.({
                     target: { value: prompt },
                   } as React.ChangeEvent<HTMLTextAreaElement>);
                   textareaRef?.current?.focus();
-                }}
-                sendExamplePrompt={(event, messageInput) => {
-                  if (isStreaming) {
-                    handleStop?.();
-                    return;
-                  }
-
-                  handleSendMessage?.(event, messageInput);
                 }}
               />
             )}

@@ -17,16 +17,9 @@ import { OperatorWorkspaceShell } from '~/components/gxeon/OperatorWorkspaceShel
 import type { OperatorWorkspaceModuleKey } from '~/lib/gxeon/operatorWorkspace';
 import type { Message } from 'ai';
 
-interface ProductFactoryMode {
-  label: string;
-  prompt: string;
-}
-
 interface PreChatHomeProps {
   importChat?: (description: string, messages: Message[]) => Promise<void>;
-  productFactoryModes: ProductFactoryMode[];
   setPrompt: (prompt: string) => void;
-  sendExamplePrompt: (event: React.UIEvent, messageInput?: string) => void;
 }
 
 const MACHINE_STATUS = [
@@ -61,7 +54,6 @@ const MODULES = [
   { title: 'Core Bridge', subtitle: 'Contrato local dry-run para integrações futuras' },
   { title: 'Product Catalog', subtitle: 'Catálogo local consolidado com imports explícitos' },
   { title: 'Agent Operating Layer', subtitle: 'Seletores, playbooks e logs locais para agentes futuros' },
-  { title: 'Command Center Tabs', subtitle: 'Workspace por abas para navegação local' },
 ];
 
 const FLOWS = [
@@ -78,7 +70,7 @@ const FLOWS = [
 
 const TEMPLATES = ['Página de venda', 'SaaS Starter', 'Loja afiliada', 'Curso digital', 'Dashboard', 'CRM de leads'];
 
-export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreChatHomeProps) {
+export function PreChatHome({ importChat, setPrompt }: PreChatHomeProps) {
   const applyProductFactoryMode = (prompt: string) => {
     setPrompt(prompt);
     requestAnimationFrame(() => {
@@ -139,23 +131,6 @@ export function PreChatHome({ importChat, productFactoryModes, setPrompt }: PreC
           </span>
         </div>
         <OperatorWorkspaceShell renderModule={renderOperatorModule} />
-        <div className="mt-3 rounded-xl border border-white/10 bg-black/25 p-2">
-          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#d9a441]">
-            Legacy prompt presets
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {productFactoryModes.map((mode) => (
-              <button
-                key={mode.label}
-                type="button"
-                onClick={() => applyProductFactoryMode(mode.prompt)}
-                className="rounded-full border border-[#d9a441]/18 bg-black/30 px-3 py-1.5 text-xs text-bolt-elements-textSecondary transition-theme hover:border-[#d9a441]/45 hover:bg-[#d9a441]/10 hover:text-bolt-elements-textPrimary"
-              >
-                {mode.label}
-              </button>
-            ))}
-          </div>
-        </div>
       </section>
 
       <section className="rounded-2xl border border-white/10 bg-[#05060a] p-2.5" aria-label="Machine status strip">
