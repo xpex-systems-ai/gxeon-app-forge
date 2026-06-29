@@ -19,6 +19,7 @@ const QUICK_ACTIONS: { label: string; tabId: OperatorWorkspaceTabId; testId: str
   { label: 'Integrar', tabId: 'integrate', testId: 'gxeon-operator-quick-integrate' },
   { label: 'Core Bridge', tabId: 'core', testId: 'gxeon-operator-quick-core-bridge' },
   { label: 'Catálogo', tabId: 'catalog', testId: 'gxeon-operator-quick-catalog' },
+  { label: 'Hotmart OS', tabId: 'distribution', testId: 'gxeon-operator-quick-hotmart-os' },
   { label: 'Agente', tabId: 'agent', testId: 'gxeon-operator-quick-agent' },
 ];
 

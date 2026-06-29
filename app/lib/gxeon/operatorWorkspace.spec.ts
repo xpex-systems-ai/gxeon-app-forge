@@ -10,7 +10,17 @@ describe('operator workspace metadata', () => {
   it('uses unique tab ids and includes all required tabs', () => {
     const ids = getOperatorWorkspaceTabs().map((tab) => tab.id);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(ids).toEqual(['create', 'package', 'monetize', 'validate', 'integrate', 'core', 'catalog', 'agent']);
+    expect(ids).toEqual([
+      'create',
+      'package',
+      'monetize',
+      'validate',
+      'integrate',
+      'core',
+      'catalog',
+      'distribution',
+      'agent',
+    ]);
   });
 
   it('assigns at least one module key to every tab and keeps Core/Product Catalog modules', () => {
@@ -18,12 +28,13 @@ describe('operator workspace metadata', () => {
     expect(tabs.every((tab) => tab.moduleKeys.length > 0)).toBe(true);
     expect(tabs.find((tab) => tab.id === 'core')?.moduleKeys).toEqual(['CoreBridgeMVP']);
     expect(tabs.find((tab) => tab.id === 'catalog')?.moduleKeys).toEqual(['ProductCatalogMVP']);
+    expect(tabs.find((tab) => tab.id === 'distribution')?.moduleKeys).toEqual(['hotmartDistribution']);
   });
 
   it('returns accurate summary counts', () => {
     const summary = getOperatorWorkspaceSummary();
-    expect(summary.tabCount).toBe(8);
-    expect(summary.moduleCount).toBe(12);
+    expect(summary.tabCount).toBe(9);
+    expect(summary.moduleCount).toBe(13);
     expect(summary.tabIds).toEqual([
       'create',
       'package',
@@ -32,10 +43,12 @@ describe('operator workspace metadata', () => {
       'integrate',
       'core',
       'catalog',
+      'distribution',
       'agent',
     ]);
     expect(summary.moduleKeys).toContain('CoreBridgeMVP');
     expect(summary.moduleKeys).toContain('ProductCatalogMVP');
+    expect(summary.moduleKeys).toContain('hotmartDistribution');
   });
 
   it('is data-only and contains no executable action handlers', () => {
