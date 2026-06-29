@@ -6,6 +6,7 @@ export type OperatorWorkspaceTabId =
   | 'integrate'
   | 'core'
   | 'catalog'
+  | 'distribution'
   | 'agent';
 
 export type OperatorWorkspaceModuleKey =
@@ -17,6 +18,7 @@ export type OperatorWorkspaceModuleKey =
   | 'IntegrationReadinessMVP'
   | 'CoreBridgeMVP'
   | 'ProductCatalogMVP'
+  | 'hotmartDistribution'
   | 'ApprovalLedgerMVP'
   | 'BetaProductPipelineMVP'
   | 'RevenueLedgerMVP'
@@ -124,6 +126,13 @@ export const OPERATOR_WORKSPACE_MODULES: readonly OperatorWorkspaceModuleDefinit
     humanApprovalRequired: true,
   },
   {
+    key: 'hotmartDistribution',
+    label: 'Hotmart Distribution OS',
+    description: 'Produtos, kits de afiliado e drafts Hotmart manual-first.',
+    localOnly: true,
+    humanApprovalRequired: true,
+  },
+  {
     key: 'AgentOperatingLayerMVP',
     label: 'Agent Operating Layer',
     description: 'Seletores, command map, playbooks, blocked actions e logs locais.',
@@ -181,6 +190,13 @@ export const OPERATOR_WORKSPACE_TABS: readonly OperatorWorkspaceTabDefinition[] 
     description: 'Consolide produtos e assets locais antes de distribuição manual.',
     moduleKeys: ['ProductCatalogMVP'],
     safetyNote: 'Importações leem localStorage somente após clique e exigem revisão humana.',
+  },
+  {
+    id: 'distribution',
+    label: 'Distribuir',
+    description: 'Produtos preparados para Hotmart, afiliados e gestores de tráfego.',
+    moduleKeys: ['hotmartDistribution'],
+    safetyNote: 'Gera drafts locais para publicação manual; sem Hotmart API, checkout, tokens ou envio externo.',
   },
   {
     id: 'agent',

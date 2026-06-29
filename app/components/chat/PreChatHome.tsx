@@ -13,6 +13,7 @@ import { BetaProductPipelineMvp } from '~/components/gxeon/BetaProductPipelineMV
 import { RevenueLedgerMvp } from '~/components/gxeon/RevenueLedgerMVP';
 import { AgentOperatingLayerMvp } from '~/components/gxeon/AgentOperatingLayerMVP';
 import { CoreBridgeMvp } from '~/components/gxeon/CoreBridgeMVP';
+import { HotmartDistributionOSMVP } from '~/components/gxeon/HotmartDistributionOSMVP';
 import { OperatorWorkspaceShell } from '~/components/gxeon/OperatorWorkspaceShell';
 import type { OperatorWorkspaceModuleKey } from '~/lib/gxeon/operatorWorkspace';
 import type { Message } from 'ai';
@@ -37,6 +38,7 @@ const MACHINE_STATUS = [
   'Product Catalog local-only',
   'Core Bridge dry-run-only',
   'Command Center tabs',
+  'Hotmart Distribution OS manual-first',
   'Agent-ready gated',
   'Human-approved gates',
 ];
@@ -53,6 +55,7 @@ const MODULES = [
   { title: 'Revenue Ledger', subtitle: 'Hipóteses, confirmações manuais e custos locais' },
   { title: 'Core Bridge', subtitle: 'Contrato local dry-run para integrações futuras' },
   { title: 'Product Catalog', subtitle: 'Catálogo local consolidado com imports explícitos' },
+  { title: 'Hotmart Distribution OS', subtitle: 'Produtos, kits de afiliado e drafts Hotmart manual-first' },
   { title: 'Agent Operating Layer', subtitle: 'Seletores, playbooks e logs locais para agentes futuros' },
 ];
 
@@ -84,6 +87,8 @@ export function PreChatHome({ importChat, setPrompt }: PreChatHomeProps) {
         return <ProductBuilderMvp setPrompt={applyProductFactoryMode} />;
       case 'ProductCatalogMVP':
         return <ProductCatalogMvp />;
+      case 'hotmartDistribution':
+        return <HotmartDistributionOSMVP setPrompt={applyProductFactoryMode} />;
       case 'MarketplacePackGeneratorMVP':
         return <MarketplacePackGeneratorMvp setPrompt={applyProductFactoryMode} />;
       case 'CheckoutBlueprintMVP':
@@ -158,7 +163,7 @@ export function PreChatHome({ importChat, setPrompt }: PreChatHomeProps) {
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#d9a441]">Módulos</p>
             <h2 className="text-lg font-black text-white">Sistema compacto da forja</h2>
           </div>
-          <span className="text-[11px] text-white/45">12 módulos + 8 abas</span>
+          <span className="text-[11px] text-white/45">13 módulos + 9 abas</span>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {MODULES.map((module) => (
