@@ -18,12 +18,13 @@ describe('operator workspace metadata', () => {
     expect(tabs.every((tab) => tab.moduleKeys.length > 0)).toBe(true);
     expect(tabs.find((tab) => tab.id === 'core')?.moduleKeys).toEqual(['CoreBridgeMVP']);
     expect(tabs.find((tab) => tab.id === 'catalog')?.moduleKeys).toEqual(['ProductCatalogMVP']);
+    expect(tabs.find((tab) => tab.id === 'package')?.moduleKeys).toContain('HotmartDistributionOSMVP');
   });
 
   it('returns accurate summary counts', () => {
     const summary = getOperatorWorkspaceSummary();
     expect(summary.tabCount).toBe(8);
-    expect(summary.moduleCount).toBe(12);
+    expect(summary.moduleCount).toBe(13);
     expect(summary.tabIds).toEqual([
       'create',
       'package',
@@ -36,6 +37,7 @@ describe('operator workspace metadata', () => {
     ]);
     expect(summary.moduleKeys).toContain('CoreBridgeMVP');
     expect(summary.moduleKeys).toContain('ProductCatalogMVP');
+    expect(summary.moduleKeys).toContain('HotmartDistributionOSMVP');
   });
 
   it('is data-only and contains no executable action handlers', () => {

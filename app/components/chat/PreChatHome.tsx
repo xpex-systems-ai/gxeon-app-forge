@@ -13,6 +13,7 @@ import { BetaProductPipelineMvp } from '~/components/gxeon/BetaProductPipelineMV
 import { RevenueLedgerMvp } from '~/components/gxeon/RevenueLedgerMVP';
 import { AgentOperatingLayerMvp } from '~/components/gxeon/AgentOperatingLayerMVP';
 import { CoreBridgeMvp } from '~/components/gxeon/CoreBridgeMVP';
+import { HotmartDistributionOsMvp } from '~/components/gxeon/HotmartDistributionOSMVP';
 import { OperatorWorkspaceShell } from '~/components/gxeon/OperatorWorkspaceShell';
 import type { OperatorWorkspaceModuleKey } from '~/lib/gxeon/operatorWorkspace';
 import type { Message } from 'ai';
@@ -37,6 +38,7 @@ const MACHINE_STATUS = [
   'Product Catalog local-only',
   'Core Bridge dry-run-only',
   'Command Center tabs',
+  'Hotmart Distribution OS local-only',
   'Agent-ready gated',
   'Human-approved gates',
 ];
@@ -45,6 +47,7 @@ const MODULES = [
   { title: 'Product Builder', subtitle: 'Oferta, avatar e estrutura' },
   { title: 'Landing Builder', subtitle: 'Páginas de venda e captura' },
   { title: 'Marketplace Pack Generator', subtitle: 'Packs comerciais sem APIs reais' },
+  { title: 'Hotmart Distribution OS', subtitle: 'Distribuição manual-first sem API Hotmart' },
   { title: 'Checkout Blueprint', subtitle: 'Preço, plano e pós-compra manual' },
   { title: 'Content Factory', subtitle: 'Posts, emails e roteiros' },
   { title: 'Integration Readiness', subtitle: 'Schemas, payloads e gates DRY_RUN_ONLY' },
@@ -86,6 +89,8 @@ export function PreChatHome({ importChat, setPrompt }: PreChatHomeProps) {
         return <ProductCatalogMvp />;
       case 'MarketplacePackGeneratorMVP':
         return <MarketplacePackGeneratorMvp setPrompt={applyProductFactoryMode} />;
+      case 'HotmartDistributionOSMVP':
+        return <HotmartDistributionOsMvp setPrompt={applyProductFactoryMode} />;
       case 'CheckoutBlueprintMVP':
         return <CheckoutBlueprintMvp setPrompt={applyProductFactoryMode} />;
       case 'LandingBuilderMVP':
@@ -158,7 +163,7 @@ export function PreChatHome({ importChat, setPrompt }: PreChatHomeProps) {
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#d9a441]">Módulos</p>
             <h2 className="text-lg font-black text-white">Sistema compacto da forja</h2>
           </div>
-          <span className="text-[11px] text-white/45">12 módulos + 8 abas</span>
+          <span className="text-[11px] text-white/45">13 módulos + 8 abas</span>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {MODULES.map((module) => (

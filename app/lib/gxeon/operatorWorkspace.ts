@@ -20,7 +20,8 @@ export type OperatorWorkspaceModuleKey =
   | 'ApprovalLedgerMVP'
   | 'BetaProductPipelineMVP'
   | 'RevenueLedgerMVP'
-  | 'AgentOperatingLayerMVP';
+  | 'AgentOperatingLayerMVP'
+  | 'HotmartDistributionOSMVP';
 
 export interface OperatorWorkspaceModuleDefinition {
   key: OperatorWorkspaceModuleKey;
@@ -124,6 +125,13 @@ export const OPERATOR_WORKSPACE_MODULES: readonly OperatorWorkspaceModuleDefinit
     humanApprovalRequired: true,
   },
   {
+    key: 'HotmartDistributionOSMVP',
+    label: 'Hotmart Distribution OS',
+    description: 'Distribuição Hotmart local-only com kit de afiliados, assets, compliance e publicação manual.',
+    localOnly: true,
+    humanApprovalRequired: true,
+  },
+  {
     key: 'AgentOperatingLayerMVP',
     label: 'Agent Operating Layer',
     description: 'Seletores, command map, playbooks, blocked actions e logs locais.',
@@ -144,7 +152,7 @@ export const OPERATOR_WORKSPACE_TABS: readonly OperatorWorkspaceTabDefinition[] 
     id: 'package',
     label: 'Embalar',
     description: 'Prepare marketplace, landing e campanha sem integrações externas.',
-    moduleKeys: ['MarketplacePackGeneratorMVP', 'LandingBuilderMVP', 'ContentFactoryMVP'],
+    moduleKeys: ['MarketplacePackGeneratorMVP', 'HotmartDistributionOSMVP', 'LandingBuilderMVP', 'ContentFactoryMVP'],
     safetyNote: 'Assets são preparados localmente; publicação e envio seguem manuais.',
   },
   {
